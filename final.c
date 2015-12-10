@@ -36,7 +36,7 @@ void drawFrog();
 int main()
 {
 	char c;
-	int dx = 0;
+	int dx = 0;					// initiate movement in the x direction
 	int deltat = 20000;
 
 	// Open Window
@@ -106,10 +106,12 @@ void drawLilyPads()
 		}
 }
 
+// NOTE: for moving objects truck, car, and log only need to increment x position
+// Cannot figure out how to generate multiple objects in one line going across
+// tried for loop incrementing i in the x position and that just changed speed? 
+
 void drawTruck(int *dx)
 {
-int i; // thought adding i would add more cars... changes speed nicely though
-
 	gfx_color(255,255,255);
 	gfx_fill_rectangle(0+*dx,YSIZE-(2.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
 	
@@ -125,8 +127,6 @@ int i; // thought adding i would add more cars... changes speed nicely though
 	(*dx)++;
 
 }
-
-// NOTE: for moving objects (besides frog) we only need to increment the x position
 
 void drawCar(int *dx)
 {
@@ -153,6 +153,8 @@ void drawLog(int *dx)
 	
 	(*dx)++;
 }
+
+// Still working on frog body
 void drawFrog()
 {
 	gfx_color(9, 110, 23);
