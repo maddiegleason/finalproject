@@ -19,8 +19,6 @@
 */ 
 
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <math.h>
 #include "gfx2.h"
 #define XSIZE 650
@@ -29,22 +27,40 @@
 #define YSCALE 50
 
 void drawBackground();
-void drawObjects();
+void drawLilyPads();
+void drawTruck(int *dx);
+void drawCar(int *dx);
+void drawLog(int *dx);
+void drawFrog();
 
 int main()
 {
 	char c;
+	int dx = 0;
+	int deltat = 20000;
 
 	// Open Window
 	gfx_open(XSIZE, YSIZE, "Frogger");
 
 	while (1){
+		gfx_clear();
 		
 		drawBackground();
-		drawObjects();
+		drawLilyPads();
+		drawTruck(&dx);
+		drawCar(&dx);
+		drawLog(&dx);
+		drawFrog();
+
+		gfx_flush();
+		usleep(deltat);
 	
+		if(gfx_event_waiting()){
 		c = gfx_wait();
-		if (c == 'q') return 0;
+			if (c=='q'){
+				return 0;			// quit program if user enters q
+			}
+		}
 	}	
 }
 
@@ -69,42 +85,76 @@ void drawBackground()
 	// Set Grass 3
 	gfx_color(74, 212, 46);
 	gfx_fill_rectangle(0,0,XSIZE,YSCALE);
+
+	/* Set Grid
+	int i, j;
+	gfx_color(0, 0, 0);
+	for (i = 0; i <=XSIZE; i=i+XSCALE){
+		gfx_line(i, 0, i, YSIZE);
+	}
+	for (j= 0; j<=YSIZE; j=j+YSCALE){
+		gfx_line(0, j, XSIZE, j);
+	}*/	
 }
 
-void drawObjects()
+void drawLilyPads()
 {
-	// drawTruck
+		gfx_color(243, 164, 246);
+		double k;
+		for (k = 2.5; k <=10.5; k = k+2){
+			gfx_fill_arc(((k*XSCALE)-20),.5*YSCALE-20,40,40,0,360);
+		}
+}
+
+void drawTruck(int *dx)
+{
+int i; // thought adding i would add more cars... changes speed nicely though
+
 	gfx_color(255,255,255);
-	gfx_fill_rectangle(0,YSIZE-(2.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
+	gfx_fill_rectangle(0+*dx,YSIZE-(2.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
 	
 	gfx_color(210, 27, 27);
-	gfx_fill_rectangle((1.5*XSCALE),YSIZE-(2.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
+	gfx_fill_rectangle((1.5*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
 	
 	gfx_color(0, 0, 0);
-	gfx_fill_rectangle((1.5*XSCALE),YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+	gfx_fill_rectangle((1.5*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
 	
 	gfx_color(81, 227, 255);
-	gfx_fill_rectangle((1.85*XSCALE), YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+	gfx_fill_rectangle((1.85*XSCALE) + *dx, YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+	
+	(*dx)++;
 
-	// drawCar
+}
+
+// NOTE: for moving objects (besides frog) we only need to increment the x position
+
+void drawCar(int *dx)
+{
 	gfx_color(165, 29, 124);
-	gfx_fill_rectangle(4*XSCALE,YSIZE-(3.8*YSCALE),XSCALE,(.6*YSCALE));
+	gfx_fill_rectangle(((4*XSCALE) + *dx),YSIZE-(3.8*YSCALE),XSCALE,(.6*YSCALE));
 	
 	gfx_color(253, 234, 59);
-	gfx_fill_rectangle((4.9*XSCALE),YSIZE-(3.8*YSCALE),(.1*XSCALE),(.1*YSCALE));
-	gfx_fill_rectangle((4.9*XSCALE),YSIZE-(3.3*YSCALE),(.1*XSCALE),(.1*YSCALE));
+	gfx_fill_rectangle(((4.9*XSCALE) + *dx),YSIZE-(3.8*YSCALE),(.1*XSCALE),(.1*YSCALE));
+	gfx_fill_rectangle(((4.9*XSCALE) + *dx),YSIZE-(3.3*YSCALE),(.1*XSCALE),(.1*YSCALE));
 	
 	gfx_color(81, 227, 255);
-	gfx_fill_rectangle((4.3*XSCALE),YSIZE-(3.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
-	gfx_fill_rectangle((4.6*XSCALE),YSIZE-(3.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
+	gfx_fill_rectangle(((4.3*XSCALE) + *dx),YSIZE-(3.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
+	gfx_fill_rectangle(((4.6*XSCALE) + *dx),YSIZE-(3.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
+	
+	(*dx)++;
+}
 
-	// drawLog
+void drawLog(int *dx)
+{
 	gfx_color(121, 68, 7);
-	gfx_fill_rectangle((7*XSCALE),YSIZE-(9.8*YSCALE),(2.5*XSCALE),(.6*YSCALE));
-	gfx_fill_rectangle((3*XSCALE),YSIZE-(10.8*YSCALE),(2*XSCALE),(.6*YSCALE));
-	gfx_fill_rectangle((9*XSCALE),YSIZE-(11.8*YSCALE),(3*XSCALE),(.6*YSCALE));
-
-	// drawFrog
+	gfx_fill_rectangle((7*XSCALE)+*dx,YSIZE-(9.8*YSCALE),(2.5*XSCALE),(.6*YSCALE));
+	gfx_fill_rectangle((3*XSCALE)+*dx,YSIZE-(10.8*YSCALE),(2*XSCALE),(.6*YSCALE));
+	gfx_fill_rectangle((9*XSCALE)+*dx,YSIZE-(11.8*YSCALE),(3*XSCALE),(.6*YSCALE));
+	
+	(*dx)++;
+}
+void drawFrog()
+{
 	gfx_color(9, 110, 23);
 	gfx_ellipse(7.5*XSCALE, YSIZE-(.5*YSCALE), (.3*XSCALE), (.4*YSCALE));
 
@@ -123,25 +173,8 @@ void drawObjects()
 	//gfx_line(
 	//gfx_line(
 	//gfx_line(
-
-	// drawLilies
-	//gfx_fill_arc(
-	//gfx_fill_arc(
-	//gfx_fill_arc(
-	//gfx_fill_arc(
-	//gfx_fill_arc(
-
-
-}	
-
-// void moveFrog();
-
-// void moveCar();
-
-// void moveLog();
-
-// void moveTurtle();
-
+}
+	
 // void levelUp();
 
 // void contorlTimer();
