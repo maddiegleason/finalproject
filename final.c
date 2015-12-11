@@ -151,35 +151,90 @@ void drawLilyPads()
 
 void drawTruck(int *dx)
 {
-	// TRUCK GOING RIGHT
-	// Truck Body 
-	gfx_color(255,255,255);
-	gfx_fill_rectangle(0+*dx,YSIZE-(2.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
-	// Truck top 
-	gfx_color(210, 27, 27);
-	gfx_fill_rectangle((1.5*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
-	// Truck Middle 
-	gfx_color(0, 0, 0);
-	gfx_fill_rectangle((1.5*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-	// Truck Window
-	gfx_color(81, 227, 255);
-	gfx_fill_rectangle((1.85*XSCALE) + *dx, YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-	(*dx)++;
-
-	// TRUCK GOING RIGHT
-	// Truck Body 
-	gfx_color(255,255,255);
-	gfx_fill_rectangle(2+*dx,YSIZE-(6.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
-	// Truck top 
-	gfx_color(210, 27, 27);
-	gfx_fill_rectangle((1.5*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
-	// Truck Middle 
-	gfx_color(0, 0, 0);
-	gfx_fill_rectangle((1.5*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-	// Truck Window
-	gfx_color(81, 227, 255);
-	gfx_fill_rectangle((1.85*XSCALE) + *dx, YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-	(*dx)++;
+	int i;
+	for (i=0; i<=13; i+=13) {
+		// Truck Body 
+		gfx_color(255,255,255);
+		gfx_fill_rectangle(0+*dx-i*XSCALE,YSIZE-(2.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
+		// Truck top 
+		gfx_color(210, 27, 27);
+		gfx_fill_rectangle((1.5*XSCALE-i*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
+		// Truck Middle 
+		gfx_color(0, 0, 0);
+		gfx_fill_rectangle((1.5*XSCALE-i*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+		// Truck Window
+		gfx_color(81, 227, 255);
+		gfx_fill_rectangle((1.85*XSCALE-i*XSCALE) + *dx, YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+		
+		// Truck Body 
+		gfx_color(255,255,255);
+		gfx_fill_rectangle(0+*dx-0.5*i*XSCALE,YSIZE-(2.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
+		// Truck top 
+		gfx_color(210, 27, 27);
+		gfx_fill_rectangle((1.5*XSCALE-0.5*i*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
+		// Truck Middle 
+		gfx_color(0, 0, 0);
+		gfx_fill_rectangle((1.5*XSCALE-0.5*i*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+		// Truck Window
+		gfx_color(81, 227, 255);
+		gfx_fill_rectangle((1.85*XSCALE-0.5*i*XSCALE) + *dx, YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+		
+		// Truck Body 
+		gfx_color(255,255,255);
+		gfx_fill_rectangle(0+*dx+0.5*i*XSCALE,YSIZE-(2.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
+		// Truck top 
+		gfx_color(210, 27, 27);
+		gfx_fill_rectangle((1.5*XSCALE+0.5*i*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
+		// Truck Middle 
+		gfx_color(0, 0, 0);
+		gfx_fill_rectangle((1.5*XSCALE+0.5*i*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+		// Truck Window
+		gfx_color(81, 227, 255);
+		gfx_fill_rectangle((1.85*XSCALE+0.5*i*XSCALE) + *dx, YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+	}
+	
+	for (i=0;i<=13;i+=13) {
+		// Truck Body 
+		gfx_color(255,255,255);
+		gfx_fill_rectangle(4*XSCALE+*dx-i*XSCALE,YSIZE-(6.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
+		// Truck top 
+		gfx_color(210, 27, 27);
+		gfx_fill_rectangle((5.5*XSCALE-i*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
+		// Truck Middle 
+		gfx_color(0, 0, 0);
+		gfx_fill_rectangle((5.5*XSCALE-i*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+		// Truck Window
+		gfx_color(81, 227, 255);
+		gfx_fill_rectangle((5.85*XSCALE-i*XSCALE) + *dx, YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+		(*dx)++;
+		
+		// Truck Body 
+		gfx_color(255,255,255);
+		gfx_fill_rectangle(4*XSCALE+*dx-0.5*i*XSCALE,YSIZE-(6.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
+		// Truck top 
+		gfx_color(210, 27, 27);
+		gfx_fill_rectangle((5.5*XSCALE-0.5*i*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
+		// Truck Middle 
+		gfx_color(0, 0, 0);
+		gfx_fill_rectangle((5.5*XSCALE-0.5*i*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+		// Truck Window
+		gfx_color(81, 227, 255);
+		gfx_fill_rectangle((5.85*XSCALE-0.5*i*XSCALE) + *dx, YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+		
+		// Truck Body 
+		gfx_color(255,255,255);
+		gfx_fill_rectangle(4*XSCALE+*dx+0.5*i*XSCALE,YSIZE-(6.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
+		// Truck top 
+		gfx_color(210, 27, 27);
+		gfx_fill_rectangle((5.5*XSCALE+0.5*i*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
+		// Truck Middle 
+		gfx_color(0, 0, 0);
+		gfx_fill_rectangle((5.5*XSCALE+0.5*i*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+		// Truck Window
+		gfx_color(81, 227, 255);
+		gfx_fill_rectangle((5.85*XSCALE+0.5*i*XSCALE) + *dx, YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+	}
+		(*dx)++;
 
 	// TRUCK GOING LEFT
 	// Truck Body 
