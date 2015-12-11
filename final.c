@@ -31,27 +31,52 @@ void drawLilyPads();
 void drawTruck(int *dx);
 void drawCar(int *dx);
 void drawLog(int *dx);
-void drawFrog();
+void drawFrog(int *dxfrog, int *dyfrog);
 void drawTurtle(int *dx);
 
 int main()
 {
 	char c;
-	int dx = 0;					// initiate movement in the x direction
+	int dx = 0;					// initialize background movement in the x direction
+	int dxfrog = 0;				// initialize frog hop coordinates
+	int dyfrog = 0;
 	int deltat = 25000;
 
 	// Open Window
 	gfx_open(XSIZE, YSIZE, "Frogger");
 
 	while (1){
-		gfx_clear();
 		
+		switch(c) {
+			case 'R': // up arrow
+				dyfrog--;
+				drawFrog(&dxfrog,&dyfrog);
+				c = '+';
+				break;
+			case 'Q': // left arrow
+				dxfrog--;
+				drawFrog(&dxfrog,&dyfrog);
+				c = '+';
+				break;
+			case 'T': // down arrow
+				dyfrog++;
+				drawFrog(&dxfrog,&dyfrog);
+				c = '+';
+				break;
+			case 'S': // right arrow
+				dxfrog++;
+				drawFrog(&dxfrog,&dyfrog);
+				c = '+';
+				break;
+		}
+		
+		gfx_clear();
 		drawBackground();
 		drawLilyPads();
 		drawTruck(&dx);
 		drawCar(&dx);
 		drawLog(&dx);
-		drawFrog();
+		drawFrog(&dxfrog,&dyfrog);
 		drawTurtle(&dx);
 
 		gfx_flush();
@@ -243,23 +268,23 @@ void drawTurtle(int *dx)
 	gfx_fill_arc((3*XSCALE-(.25*XSCALE)+ 39 + *dx), (YSIZE-9.45*YSCALE)-7.5, 4, 4, 0, 360);
 }
 
-void drawFrog()
+void drawFrog(int *dxfrog, int *dyfrog)
 {
 	// NOTE: frog will move in the x and y direction where dx and dy will be incremented by XSCALE and YSCALE respectively 
 	// frog green body
 	gfx_color(43, 255, 0);
-	gfx_fill_arc((7.5*XSCALE - (.25*XSCALE)), (YSIZE-(.4*YSCALE)-(.4*YSCALE)), (.5*YSCALE), (.7*YSCALE), 0, 180);
-	gfx_fill_arc((7.5*XSCALE - (.25*XSCALE)), (YSIZE-(.4*YSCALE)-(.4*YSCALE)), (.5*YSCALE), (.7*YSCALE), 180, 360);
+	gfx_fill_arc((7.5*XSCALE - (.25*XSCALE) + *dxfrog*XSCALE), (YSIZE-(.4*YSCALE)-(.4*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
+	gfx_fill_arc((7.5*XSCALE - (.25*XSCALE) + *dxfrog*XSCALE), (YSIZE-(.4*YSCALE)-(.4*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
 	
 	// frog yellow body
 	gfx_color(243, 255, 58);
-	gfx_fill_arc((7.5*XSCALE - (.15*XSCALE)), (YSIZE-(.3*YSCALE)-(.4*YSCALE)), (.3*YSCALE), (.5*YSCALE), 0, 180);
-	gfx_fill_arc((7.5*XSCALE - (.15*XSCALE)), (YSIZE-(.3*YSCALE)-(.4*YSCALE)), (.3*YSCALE), (.5*YSCALE), 180, 360);
+	gfx_fill_arc((7.5*XSCALE - (.15*XSCALE) + *dxfrog*XSCALE), (YSIZE-(.3*YSCALE)-(.4*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
+	gfx_fill_arc((7.5*XSCALE - (.15*XSCALE) + *dxfrog*XSCALE), (YSIZE-(.3*YSCALE)-(.4*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
 	
 	// frog eyes
 	gfx_color(239, 20, 239);
-	gfx_fill_arc((7.3*XSCALE)-5,YSIZE-(.7*YSCALE)-5,10,10,0,360);
-	gfx_fill_arc((7.7*XSCALE)-5,YSIZE-(.7*YSCALE)-5,10,10,0,360);
+	gfx_fill_arc((7.3*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+	gfx_fill_arc((7.7*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
 }
 	
 // void levelUp();
