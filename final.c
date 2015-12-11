@@ -40,7 +40,7 @@ int main()
 	int dx = 0;					// initialize background movement in the x direction
 	int dxfrog = 0;				// initialize frog hop coordinates
 	int dyfrog = 0;
-	int deltat = 25000;
+	int deltat = 30000;
 
 	// Open Window
 	gfx_open(XSIZE, YSIZE, "Frogger");
@@ -151,92 +151,43 @@ void drawLilyPads()
 
 void drawTruck(int *dx)
 {
-	int i;
-	for (i=0; i<=13; i+=13) {
-		// Truck Body 
-		gfx_color(255,255,255);
-		gfx_fill_rectangle(0+*dx-i*XSCALE,YSIZE-(2.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
-		// Truck top 
-		gfx_color(210, 27, 27);
-		gfx_fill_rectangle((1.5*XSCALE-i*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
-		// Truck Middle 
-		gfx_color(0, 0, 0);
-		gfx_fill_rectangle((1.5*XSCALE-i*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-		// Truck Window
-		gfx_color(81, 227, 255);
-		gfx_fill_rectangle((1.85*XSCALE-i*XSCALE) + *dx, YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+	double i, j;
+	for (j=-1; j <= 1 ; j+=0.5){	
+		for (i=0; i<=13; i+=13) {
 		
-		// Truck Body 
-		gfx_color(255,255,255);
-		gfx_fill_rectangle(0+*dx-0.5*i*XSCALE,YSIZE-(2.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
-		// Truck top 
-		gfx_color(210, 27, 27);
-		gfx_fill_rectangle((1.5*XSCALE-0.5*i*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
-		// Truck Middle 
-		gfx_color(0, 0, 0);
-		gfx_fill_rectangle((1.5*XSCALE-0.5*i*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-		// Truck Window
-		gfx_color(81, 227, 255);
-		gfx_fill_rectangle((1.85*XSCALE-0.5*i*XSCALE) + *dx, YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-		
-		// Truck Body 
-		gfx_color(255,255,255);
-		gfx_fill_rectangle(0+*dx+0.5*i*XSCALE,YSIZE-(2.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
-		// Truck top 
-		gfx_color(210, 27, 27);
-		gfx_fill_rectangle((1.5*XSCALE+0.5*i*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
-		// Truck Middle 
-		gfx_color(0, 0, 0);
-		gfx_fill_rectangle((1.5*XSCALE+0.5*i*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-		// Truck Window
-		gfx_color(81, 227, 255);
-		gfx_fill_rectangle((1.85*XSCALE+0.5*i*XSCALE) + *dx, YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+			// Truck Body 
+			gfx_color(255,255,255);
+			gfx_fill_rectangle(0+*dx+i*j*XSCALE,YSIZE-(2.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
+			// Truck top 
+			gfx_color(210, 27, 27);
+			gfx_fill_rectangle((1.5*XSCALE+i*j*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
+			// Truck Middle 
+			gfx_color(0, 0, 0);
+			gfx_fill_rectangle((1.5*XSCALE+i*j*XSCALE) + *dx,YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+			// Truck Window
+			gfx_color(81, 227, 255);
+			gfx_fill_rectangle((1.85*XSCALE+i*j*XSCALE) + *dx, YSIZE-(2.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+		}	
 	}
-	
-	for (i=0;i<=13;i+=13) {
-		// Truck Body 
-		gfx_color(255,255,255);
-		gfx_fill_rectangle(4*XSCALE+*dx-i*XSCALE,YSIZE-(6.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
-		// Truck top 
-		gfx_color(210, 27, 27);
-		gfx_fill_rectangle((5.5*XSCALE-i*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
-		// Truck Middle 
-		gfx_color(0, 0, 0);
-		gfx_fill_rectangle((5.5*XSCALE-i*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-		// Truck Window
-		gfx_color(81, 227, 255);
-		gfx_fill_rectangle((5.85*XSCALE-i*XSCALE) + *dx, YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-		(*dx)++;
-		
-		// Truck Body 
-		gfx_color(255,255,255);
-		gfx_fill_rectangle(4*XSCALE+*dx-0.5*i*XSCALE,YSIZE-(6.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
-		// Truck top 
-		gfx_color(210, 27, 27);
-		gfx_fill_rectangle((5.5*XSCALE-0.5*i*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
-		// Truck Middle 
-		gfx_color(0, 0, 0);
-		gfx_fill_rectangle((5.5*XSCALE-0.5*i*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-		// Truck Window
-		gfx_color(81, 227, 255);
-		gfx_fill_rectangle((5.85*XSCALE-0.5*i*XSCALE) + *dx, YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-		
-		// Truck Body 
-		gfx_color(255,255,255);
-		gfx_fill_rectangle(4*XSCALE+*dx+0.5*i*XSCALE,YSIZE-(6.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
-		// Truck top 
-		gfx_color(210, 27, 27);
-		gfx_fill_rectangle((5.5*XSCALE+0.5*i*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
-		// Truck Middle 
-		gfx_color(0, 0, 0);
-		gfx_fill_rectangle((5.5*XSCALE+0.5*i*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-		// Truck Window
-		gfx_color(81, 227, 255);
-		gfx_fill_rectangle((5.85*XSCALE+0.5*i*XSCALE) + *dx, YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+	for (j=-1; j <=1; j+=0.5){
+		for (i=0;i<=13;i+=13) {
+			// Truck Body 
+			gfx_color(255,255,255);
+			gfx_fill_rectangle(4*XSCALE+*dx+i*j*XSCALE,YSIZE-(6.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
+			// Truck top 
+			gfx_color(210, 27, 27);
+			gfx_fill_rectangle((5.5*XSCALE+i*j*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
+			// Truck Middle 
+			gfx_color(0, 0, 0);
+			gfx_fill_rectangle((5.5*XSCALE+i*j*XSCALE) + *dx,YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+			// Truck Window
+			gfx_color(81, 227, 255);
+			gfx_fill_rectangle((5.85*XSCALE+i*j*XSCALE) + *dx, YSIZE-(6.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+		}
 	}
-		(*dx)++;
+	(*dx)++;
 
-	// TRUCK GOING LEFT
+	/* TRUCK GOING LEFT
 	// Truck Body 
 	gfx_color(255,255,255);
 	gfx_fill_rectangle(XSIZE-(1.5*XSCALE) - *dx,YSIZE-(4.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
@@ -249,13 +200,13 @@ void drawTruck(int *dx)
 	// Truck Window
 	gfx_color(81, 227, 255);
 	gfx_fill_rectangle(XSIZE-(2.00*XSCALE) - *dx, YSIZE-(4.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-	(*dx)--;
+	(*dx)--;*/
 
 }
 
 void drawCar(int *dx)
 {
-	// CAR GOING RIGHT
+	/* CAR GOING RIGHT
 	// Car Body
 	gfx_color(165, 29, 124);
 	gfx_fill_rectangle(((1*XSCALE) + *dx),YSIZE-(3.8*YSCALE),XSCALE,(.6*YSCALE));
@@ -282,22 +233,22 @@ void drawCar(int *dx)
 	gfx_fill_rectangle((XSIZE-(3.4*XSCALE) - *dx),YSIZE-(5.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
 	gfx_fill_rectangle((XSIZE-(3.7*XSCALE) - *dx),YSIZE-(5.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
 	(*dx)--;
-
+*/
 }
 
 void drawLog(int *dx)
 {
-	gfx_color(121, 68, 7);
+	/*gfx_color(121, 68, 7);
 	gfx_fill_rectangle((7*XSCALE)+*dx,YSIZE-(9.8*YSCALE),(2.5*XSCALE),(.6*YSCALE));
 	gfx_fill_rectangle((3*XSCALE)+*dx,YSIZE-(10.8*YSCALE),(2*XSCALE),(.6*YSCALE));
 	gfx_fill_rectangle((9*XSCALE)+*dx,YSIZE-(11.8*YSCALE),(3*XSCALE),(.6*YSCALE));
 	
-	(*dx)++;
+	(*dx)++;*/
 }
 
 void drawTurtle(int *dx)
 {
-	// HOW CAN WE MAKE THREE TURTLES WITH A FOR LOOP? 
+	/* HOW CAN WE MAKE THREE TURTLES WITH A FOR LOOP? 
 	// Turtle 1
 	gfx_color(9, 110, 23);
 	gfx_fill_arc((5*XSCALE - (.25*XSCALE) + *dx), (YSIZE-(9.7*YSCALE)), (.7*YSCALE), (.5*YSCALE), 0, 180);
@@ -333,6 +284,7 @@ void drawTurtle(int *dx)
 	gfx_color(0, 0, 0);
 	gfx_fill_arc((3*XSCALE-(.25*XSCALE)+ 39 + *dx), (YSIZE-9.25*YSCALE)-7.5, 4, 4, 0, 360);
 	gfx_fill_arc((3*XSCALE-(.25*XSCALE)+ 39 + *dx), (YSIZE-9.45*YSCALE)-7.5, 4, 4, 0, 360);
+	*/
 }
 
 void drawFrog(int *dxfrog, int *dyfrog)
