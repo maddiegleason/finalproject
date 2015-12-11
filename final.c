@@ -46,25 +46,37 @@ int main()
 	gfx_open(XSIZE, YSIZE, "Frogger");
 
 	while (1){
+	
+	if (dx > XSIZE) {
+		dx = 0;
+	}
 		
 		switch(c) {
 			case 'R': // up arrow
-				dyfrog--;
+				if (dyfrog > -12) {
+					dyfrog--;
+				}
 				drawFrog(&dxfrog,&dyfrog);
 				c = '+';
 				break;
 			case 'Q': // left arrow
-				dxfrog--;
+				if (dxfrog > -7) {
+					dxfrog--;
+				}
 				drawFrog(&dxfrog,&dyfrog);
 				c = '+';
 				break;
 			case 'T': // down arrow
-				dyfrog++;
+				if (dyfrog < 0) {
+					dyfrog++;
+				}
 				drawFrog(&dxfrog,&dyfrog);
 				c = '+';
 				break;
 			case 'S': // right arrow
-				dxfrog++;
+				if (dxfrog<5) {
+					dxfrog++;
+				}
 				drawFrog(&dxfrog,&dyfrog);
 				c = '+';
 				break;
@@ -76,8 +88,8 @@ int main()
 		drawTruck(&dx);
 		drawCar(&dx);
 		drawLog(&dx);
-		drawFrog(&dxfrog,&dyfrog);
 		drawTurtle(&dx);
+		drawFrog(&dxfrog,&dyfrog);
 
 		gfx_flush();
 		usleep(deltat);
@@ -113,7 +125,7 @@ void drawBackground()
 	gfx_color(74, 212, 46);
 	gfx_fill_rectangle(0,0,XSIZE,YSCALE);
 
-	/* Set Grid
+	// Set Grid
 	int i, j;
 	gfx_color(108, 105, 105);
 	for (i = 0; i <=XSIZE; i=i+XSCALE){
@@ -121,7 +133,7 @@ void drawBackground()
 	}
 	for (j= 0; j<=YSIZE; j=j+YSCALE){
 		gfx_line(0, j, XSIZE, j);
-	}*/	
+	}
 }
 
 void drawLilyPads()
@@ -191,15 +203,15 @@ void drawCar(int *dx)
 	// CAR GOING RIGHT
 	// Car Body
 	gfx_color(165, 29, 124);
-	gfx_fill_rectangle(((4*XSCALE) + *dx),YSIZE-(3.8*YSCALE),XSCALE,(.6*YSCALE));
+	gfx_fill_rectangle(((1*XSCALE) + *dx),YSIZE-(3.8*YSCALE),XSCALE,(.6*YSCALE));
 	// Headlights
 	gfx_color(253, 234, 59);
-	gfx_fill_rectangle(((4.9*XSCALE) + *dx),YSIZE-(3.8*YSCALE),(.1*XSCALE),(.1*YSCALE));
-	gfx_fill_rectangle(((4.9*XSCALE) + *dx),YSIZE-(3.3*YSCALE),(.1*XSCALE),(.1*YSCALE));
+	gfx_fill_rectangle(((1.9*XSCALE) + *dx),YSIZE-(3.8*YSCALE),(.1*XSCALE),(.1*YSCALE));
+	gfx_fill_rectangle(((1.9*XSCALE) + *dx),YSIZE-(3.3*YSCALE),(.1*XSCALE),(.1*YSCALE));
 	// Windows
 	gfx_color(81, 227, 255);
-	gfx_fill_rectangle(((4.3*XSCALE) + *dx),YSIZE-(3.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
-	gfx_fill_rectangle(((4.6*XSCALE) + *dx),YSIZE-(3.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
+	gfx_fill_rectangle(((1.3*XSCALE) + *dx),YSIZE-(3.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
+	gfx_fill_rectangle(((1.6*XSCALE) + *dx),YSIZE-(3.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
 	(*dx)++;
 
 	// CAR GOING LEFT
