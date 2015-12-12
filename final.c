@@ -25,6 +25,7 @@
 #define YSIZE 650
 #define XSCALE 50 
 #define YSCALE 50
+#define GRID 13
 
 void drawBackground();
 void drawLilyPads();
@@ -33,81 +34,129 @@ void drawCar(int *dxcar1, int *dxcar2);
 void drawLog(int *dxlog1, int *dxlog2, int *dxlog3);
 void drawFrog(int *dxfrog, int *dyfrog);
 void drawTurtle(int *dxturtle, int *dxturtle1);
+void resetFrog(int *frog_xpos, int *frog_ypos, int *collision);
+void drawX(int x, int y);
 
 int main()
 {
 	char c;
-	int dx = 0;					// initialize background movement in the x direction
-	int dxfrog = 0;				// initialize frog hop coordinates
-	int dyfrog = 0;
 	int deltat = 25000;
-	int dxtruck1 = 0;
-	int dxtruck2 = 0;
-	int dxcar1 = 0;
-	int dxcar2 = 0;
-	int dxlog1 = 0;
-	int dxlog2 = 0;
-	int dxlog3 = 0;
-	int dxturtle = 0;
-	int dxturtle1= 0;
+	int dxfrog = 0, dyfrog = 0;			// initialize frog hop coordinates
+	int dxtruck1 = 0, dxtruck2 = 0;
+	int dxcar1 = 0, dxcar2 = 0;
+	int dxlog1 = 0, dxlog2 = 0, dxlog3 = 0;
+	int dxturtle = 0, dxturtle1= 0;
+	int frog_xpos = 8;
+	int frog_ypos = 13;
+	int truck_xpos1 = 1, truck_ypos1 = 11;
+	int truck_xpos2 = 5, truck_ypos2 = 9;
+	int truck_xpos3 = 12, truck_ypos3 = 7; 
+	int car[GRID];
+	int log[GRID];
+	int turtle[GRID];
+	int collision = 0;
+	
 
 	// Open Window
 	gfx_open(XSIZE, YSIZE, "Frogger");
 
 	while (1){
-	
-	if (dx > XSIZE) {
-		dx = 0;
-	}
-	switch(c) {
-		case 'R': // up arrow
-			if (dyfrog > -12) {				// criteria establihsed based on starting point of frog
-				dyfrog--;
+		switch(c) {
+			case 'R': // up arrow
+				if (dyfrog > -12) {				// criteria establihsed based on starting point of frog
+					dyfrog--;
+					frog_ypos+=-1;
+				}
+				drawFrog(&dxfrog,&dyfrog);
+				c = '+';
+				break;
+			case 'Q': // left arrow
+				if (dxfrog > -7) {
+					dxfrog--;
+					frog_xpos+=-1;
+				}
+				drawFrog(&dxfrog,&dyfrog);
+				c = '+';
+				break;
+			case 'T': // down arrow
+				if (dyfrog < 0) {
+					dyfrog++;
+					frog_ypos+=1;
+				}
+				drawFrog(&dxfrog,&dyfrog);
+				c = '+';
+				break;
+			case 'S': // right arrow
+				if (dxfrog<5) {
+					dxfrog++;
+					frog_xpos+=1;
+				}
+				drawFrog(&dxfrog,&dyfrog);
+				c = '+';
+				break;
 			}
-			drawFrog(&dxfrog,&dyfrog);
-			c = '+';
-			break;
-		case 'Q': // left arrow
-			if (dxfrog > -7) {
-				dxfrog--;
-			}
-			drawFrog(&dxfrog,&dyfrog);
-			c = '+';
-			break;
-		case 'T': // down arrow
-			if (dyfrog < 0) {
-				dyfrog++;
-			}
-			drawFrog(&dxfrog,&dyfrog);
-			c = '+';
-			break;
-		case 'S': // right arrow
-			if (dxfrog<5) {
-				dxfrog++;
-			}
-			drawFrog(&dxfrog,&dyfrog);
-			c = '+';
-			break;
-		}
+			// Check positions for collisions between frog and objects
 		
-		gfx_clear();
-		drawBackground();
-		drawLilyPads();
-		drawTruck(&dxtruck1, &dxtruck2);
-		drawCar(&dxcar1,&dxcar2);
-		drawLog(&dxlog1,&dxlog2,&dxlog3);
-		drawTurtle(&dxturtle, &dxturtle1);
-		drawFrog(&dxfrog,&dyfrog);
-
-		gfx_flush();
-		usleep(deltat);
-	
-		if(gfx_event_waiting()){
-		c = gfx_wait();
-			if (c=='q'){
-				return 0;			// quit program if user enters q
+			switch (frog_ypos){
+				case 1: //LilyPad 
+					if (frog_xpos == 3 || 5 || 7 || 9 || 11){
+						// level up				
+					}
+					break;
+				case 2:	//Log 3 moving right with turtles
+						collision = 1;
+						resetFrog(&frog_xpos, &frog_ypos, &collision);
+					break;
+				case 3:	//Log 2 moving left
+						collision = 1;
+						resetFrog(&frog_xpos, &frog_ypos, &collision);
+					break;
+				case 4:	//Log 1	moving right with turtles
+						collision = 1;
+						resetFrog(&frog_xpos, &frog_ypos, &collision);
+					break;
+				case 7:	//Truck 1 moving right
+						collision = 1;
+						resetFrog(&frog_xpos, &frog_ypos, &collision);
+					break;
+				case 8:	//Car 2 moving left
+						collision = 1;
+						resetFrog(&frog_xpos, &frog_ypos, &collision);
+					break;
+				case 9:	//Truck 2 moving left
+						collision = 1;
+						resetFrog(&frog_xpos, &frog_ypos, &collision);
+					break;
+				case 10:	//Car 1 moving right
+						collision = 1;
+						resetFrog(&frog_xpos, &frog_ypos, &collision);
+					break;
+				case 11://Truck 1 moving right
+					if ((frog_xpos == truck_xpos1) || (truck_xpos1 + 1)){
+						collision = 1;
+						resetFrog(&frog_xpos, &frog_ypos, &collision);
+					}
+					break;
 			}
-		}
+			
+			gfx_clear();
+			drawBackground();
+			drawLilyPads();
+			drawTruck(&dxtruck1, &dxtruck2);
+			drawCar(&dxcar1,&dxcar2);
+			drawLog(&dxlog1,&dxlog2,&dxlog3);
+			drawTurtle(&dxturtle, &dxturtle1);
+			drawFrog(&dxfrog,&dyfrog);
+
+			gfx_flush();
+			usleep(deltat);
+	
+			if(gfx_event_waiting()){
+			c = gfx_wait();
+				if (c=='q'){
+					return 0;			// quit program if user enters q
+				}
+			}
 	}	
 }
 
@@ -133,7 +182,7 @@ void drawBackground()
 	gfx_color(74, 212, 46);
 	gfx_fill_rectangle(0,0,XSIZE,YSCALE);
 
-	/* Set Grid
+	// Set Grid
 	int i, j;
 	gfx_color(108, 105, 105);
 	for (i = 0; i <=XSIZE; i=i+XSCALE){
@@ -141,7 +190,7 @@ void drawBackground()
 	}
 	for (j= 0; j<=YSIZE; j=j+YSCALE){
 		gfx_line(0, j, XSIZE, j);
-	}*/
+	}
 }
 
 void drawLilyPads()
@@ -293,6 +342,7 @@ void drawFrog(int *dxfrog, int *dyfrog)
 	gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
 	
 	// frog yellow body
+
 	gfx_color(243, 255, 58);
 	gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
 	gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
@@ -302,7 +352,24 @@ void drawFrog(int *dxfrog, int *dyfrog)
 	gfx_fill_arc((7.3*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
 	gfx_fill_arc((7.7*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
 }
-	
+
+void resetFrog(int *frog_xpos, int *frog_ypos, int *collision)
+{
+	if (*collision){
+		drawX(*frog_xpos, *frog_ypos);
+		*frog_xpos = 8;
+		*frog_ypos = 13;
+	}
+	*collision = 0;
+}
+
+void drawX(int x, int y)
+{
+	gfx_color(255, 0, 0);
+	gfx_line(x, y, x - XSCALE, y + YSCALE);
+	gfx_line(x, y + YSCALE, x - XSCALE, y);
+}
+
 // void levelUp();
 
 // void contorlTimer();
