@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 #include "gfx2.h"
 #define XSIZE 650
 #define YSIZE 650
@@ -27,19 +28,21 @@
 #define YSCALE 50
 #define GRID 13
 
+void waitFor (unsigned int secs);
 void drawBackground();
 void drawLilyPads();
-void drawTruck(int *dxtruck1, int *dxtruck2);
+void drawTruck(int *dxtruck1, int *dxtruck2, int *truck_xpos1, int *truck_xpos2, int *truck_xpos3);
 void drawCar(int *dxcar1, int *dxcar2);
 void drawLog(int *dxlog1, int *dxlog2, int *dxlog3);
 void drawFrog(int *dxfrog, int *dyfrog);
 void drawTurtle(int *dxturtle, int *dxturtle1);
-void resetFrog(int *frog_xpos, int *frog_ypos, int *collision);
+void resetFrog(int *frog_xpos, int *frog_ypos, int *collision, int *dxfrog, int *dyfrog);
 void drawX(int x, int y);
 
 int main()
 {
 	char c;
+	char w;
 	int deltat = 25000;
 	int dxfrog = 0, dyfrog = 0;			// initialize frog hop coordinates
 	int dxtruck1 = 0, dxtruck2 = 0;
@@ -51,9 +54,6 @@ int main()
 	int truck_xpos1 = 1, truck_ypos1 = 11;
 	int truck_xpos2 = 5, truck_ypos2 = 9;
 	int truck_xpos3 = 12, truck_ypos3 = 7; 
-	int car[GRID];
-	int log[GRID];
-	int turtle[GRID];
 	int collision = 0;
 	
 
@@ -61,11 +61,17 @@ int main()
 	gfx_open(XSIZE, YSIZE, "Frogger");
 
 	while (1){
+
+	gfx_text(XSIZE/2-5,YSIZE/2-20,"FROGGER");	gfx_text(XSIZE/2-20,YSIZE/2-5,"click to start");	gfx_text(XSIZE/2-20,YSIZE/2+50,"INSTRUCTIONS:");	gfx_text(XSIZE/2-20,YSIZE/2+65,"don't die lol");	if(gfx_event_waiting()){		w = gfx_wait();		if (w == 'q') return;	}
+	
+	while (w == 1) {
+
 		switch(c) {
 			case 'R': // up arrow
 				if (dyfrog > -12) {				// criteria establihsed based on starting point of frog
 					dyfrog--;
 					frog_ypos+=-1;
+			//		printf("frog y position: %d\n", frog_ypos);
 				}
 				drawFrog(&dxfrog,&dyfrog);
 				c = '+';
@@ -74,6 +80,7 @@ int main()
 				if (dxfrog > -7) {
 					dxfrog--;
 					frog_xpos+=-1;
+			//		printf("frog x position: %d\n", frog_xpos);
 				}
 				drawFrog(&dxfrog,&dyfrog);
 				c = '+';
@@ -82,6 +89,7 @@ int main()
 				if (dyfrog < 0) {
 					dyfrog++;
 					frog_ypos+=1;
+			//		printf("frog y position: %d\n", frog_ypos);
 				}
 				drawFrog(&dxfrog,&dyfrog);
 				c = '+';
@@ -90,63 +98,65 @@ int main()
 				if (dxfrog<5) {
 					dxfrog++;
 					frog_xpos+=1;
+			//		printf("frog x position: %d\n", frog_xpos);
 				}
 				drawFrog(&dxfrog,&dyfrog);
 				c = '+';
 				break;
 			}
 			// Check positions for collisions between frog and objects
-		
+				
+			gfx_clear();
+			drawBackground();
+			drawLilyPads();
+			drawTruck(&dxtruck1, &dxtruck2, &truck_xpos1, &truck_xpos2, &truck_xpos3);
+			drawCar(&dxcar1,&dxcar2);
+			drawLog(&dxlog1,&dxlog2,&dxlog3);
+			drawTurtle(&dxturtle, &dxturtle1);
+			drawFrog(&dxfrog,&dyfrog);
+
 			switch (frog_ypos){
-				case 1: //LilyPad 
+				/*case 1: //LilyPad 
 					if (frog_xpos == 3 || 5 || 7 || 9 || 11){
 						// level up				
 					}
 					break;
 				case 2:	//Log 3 moving right with turtles
 						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision);
+						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
 					break;
 				case 3:	//Log 2 moving left
 						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision);
+						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
 					break;
 				case 4:	//Log 1	moving right with turtles
 						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision);
+						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
 					break;
 				case 7:	//Truck 1 moving right
 						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision);
+						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
 					break;
 				case 8:	//Car 2 moving left
 						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision);
+						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
 					break;
 				case 9:	//Truck 2 moving left
 						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision);
+						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
 					break;
 				case 10:	//Car 1 moving right
 						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision);
-					break;
+						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
+					break;*/
 				case 11://Truck 1 moving right
-					if ((frog_xpos == truck_xpos1) || (truck_xpos1 + 1)){
+					if ((frog_xpos == truck_xpos1) || (frog_xpos == (truck_xpos1 + 1))){
 						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision);
+						drawX(frog_xpos+1, frog_ypos-1);
+						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
 					}
 					break;
 			}
-			
-			gfx_clear();
-			drawBackground();
-			drawLilyPads();
-			drawTruck(&dxtruck1, &dxtruck2);
-			drawCar(&dxcar1,&dxcar2);
-			drawLog(&dxlog1,&dxlog2,&dxlog3);
-			drawTurtle(&dxturtle, &dxturtle1);
-			drawFrog(&dxfrog,&dyfrog);
 
 			gfx_flush();
 			usleep(deltat);
@@ -157,7 +167,14 @@ int main()
 					return 0;			// quit program if user enters q
 				}
 			}
+		}
 	}	
+}
+
+void waitFor(unsigned int secs) {
+	unsigned int retTime;	
+	retTime = time(0) + secs;		// get finishing time
+	while (time(0) < retTime); 		// loop until it arrives
 }
 
 void drawBackground()
@@ -202,11 +219,11 @@ void drawLilyPads()
 	}
 }
 
-void drawTruck(int *dxtruck1, int *dxtruck2) 
+void drawTruck(int *dxtruck1, int *dxtruck2, int *truck_xpos1, int *truck_xpos2, int *truck_xpos3) 
 {
 	double i, j, k;
 	for (k=0; k<=5;k+=4) {
-		for (j=-1; j <= 1 ; j+=0.5){	
+		for (j=-0.5; j <= 0.5 ; j+=0.5){	
 			for (i=0; i<=130; i+=13) {
 				// TRUCKS GOING RIGHT
 				// Truck Body 
@@ -234,18 +251,51 @@ void drawTruck(int *dxtruck1, int *dxtruck2)
 				gfx_fill_rectangle(XSIZE-(1.65*XSCALE+i*j*XSCALE) - *dxtruck2,YSIZE-(4.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
 				// Truck Window
 				gfx_color(81, 227, 255);
-				gfx_fill_rectangle(XSIZE-(2.00*XSCALE+i*j*XSCALE) - *dxtruck2, YSIZE-(4.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-			}	
-		}	
+				gfx_fill_rectangle(XSIZE-(2.00*XSCALE+i*j*XSCALE) - *dxtruck2, YSIZE-(4.8*YSCALE),(.15*XSCALE),(.6*YSCALE));			
+			}		
+		}
 	}	
+	int m = 1, n = 1;
+	
+/*	for (k=0; k<=5;k+=4) {
+		for (j=-0.5; j <= 0.5 ; j+=0.5){	
+			for (i=0; i<=130; i+=13) {
+	*/			for (m = 1; m<=13; m++){
+					if (*dxtruck1 == 50*m){
+						*truck_xpos1+=1;
+			//			printf("Truck position 1: %d\n", *truck_xpos1);
+					}
+			/*		if ((k*XSCALE+*dxtruck1 + i*j*XSCALE) == 50*m){
+						*truck_xpos1+=1;
+						printf("Truck position 1: %d\n", *truck_xpos1);
+					}
+			*/		if (*dxtruck2 == 50*m){
+						*truck_xpos2+=1;
+			//			printf("Truck position 2: %d\n", *truck_xpos2);
+					}
+				}
+			//}
+		//}
+	//}	
+
 	(*dxtruck1)++;
 	(*dxtruck2)+=2;
+
+	if (*dxtruck1 > XSIZE) {
+		*dxtruck1 = 0;
+	}
+	if (*dxtruck2 > XSIZE) {
+		*dxtruck2 = 0;
+	}
+
+//	printf("dxtruck1: %d\n", *dxtruck1);
+//	printf("dxtruck2: %d\n", *dxtruck2);
 }
 
 void drawCar(int *dxcar1, int *dxcar2)
 {
 	double i,j;
-	for (j=-1; j <=1; j+=0.5){
+	for (j=-0.5; j <=0.5; j+=0.5){
 		for (i=0;i<=130;i+=13) {
 			// CAR GOING RIGHT
 			// Car Body
@@ -276,11 +326,13 @@ void drawCar(int *dxcar1, int *dxcar2)
 	}
 	(*dxcar1)++;
 	(*dxcar2)+=2;
+
+
 }
 
 void drawLog(int *dxlog1, int *dxlog2, int *dxlog3)
 {
-	double i,j;
+	/*double i,j;
 	for (j=-5; j <=5; j+=0.5){
 		for (i=0;i<=130;i+=13) {
 			gfx_color(121, 68, 7);	
@@ -291,12 +343,12 @@ void drawLog(int *dxlog1, int *dxlog2, int *dxlog3)
 	}
 	(*dxlog1)+=2;
 	(*dxlog2)++;
-	(*dxlog3)+=3;
+	(*dxlog3)+=3;*/
 }
 
 void drawTurtle(int *dxturtle, int *dxturtle1)
 {
-	double i,j,k;	
+	/*double i,j,k;	
 	for (k=3.5;k<=5.5;k++){	
 		for (j=-1; j <=1; j+=0.5){
 			for (i=0;i<=130;i+=13){
@@ -331,6 +383,7 @@ void drawTurtle(int *dxturtle, int *dxturtle1)
 	}
 	(*dxturtle)+=2;
 	(*dxturtle1)+=3;
+*/
 }
 
 void drawFrog(int *dxfrog, int *dyfrog)
@@ -353,21 +406,21 @@ void drawFrog(int *dxfrog, int *dyfrog)
 	gfx_fill_arc((7.7*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
 }
 
-void resetFrog(int *frog_xpos, int *frog_ypos, int *collision)
+void resetFrog(int *frog_xpos, int *frog_ypos, int *collision, int *dxfrog, int *dyfrog)
 {
-	if (*collision){
-		drawX(*frog_xpos, *frog_ypos);
+	//	waitFor(2);		
 		*frog_xpos = 8;
 		*frog_ypos = 13;
-	}
-	*collision = 0;
+		*dxfrog = 0;
+		*dyfrog = 0;
+		*collision = 0;
 }
 
 void drawX(int x, int y)
 {
 	gfx_color(255, 0, 0);
-	gfx_line(x, y, x - XSCALE, y + YSCALE);
-	gfx_line(x, y + YSCALE, x - XSCALE, y);
+	gfx_line(x*XSCALE, y*YSCALE, x*XSCALE - XSCALE, y*YSCALE + YSCALE);
+	gfx_line(x*XSCALE, y*YSCALE + YSCALE, x*XSCALE - XSCALE, y*YSCALE);
 }
 
 // void levelUp();
