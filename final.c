@@ -32,7 +32,7 @@ void drawTruck(int *dxtruck1, int *dxtruck2);
 void drawCar(int *dxcar1, int *dxcar2);
 void drawLog(int *dxlog1, int *dxlog2, int *dxlog3);
 void drawFrog(int *dxfrog, int *dyfrog);
-void drawTurtle(int *dxturtle);
+void drawTurtle(int *dxturtle, int *dxturtle1);
 
 int main()
 {
@@ -49,6 +49,7 @@ int main()
 	int dxlog2 = 0;
 	int dxlog3 = 0;
 	int dxturtle = 0;
+	int dxturtle1= 0;
 
 	// Open Window
 	gfx_open(XSIZE, YSIZE, "Frogger");
@@ -60,7 +61,7 @@ int main()
 	}
 	switch(c) {
 		case 'R': // up arrow
-			if (dyfrog > -12) {
+			if (dyfrog > -12) {				// criteria establihsed based on starting point of frog
 				dyfrog--;
 			}
 			drawFrog(&dxfrog,&dyfrog);
@@ -95,7 +96,7 @@ int main()
 		drawTruck(&dxtruck1, &dxtruck2);
 		drawCar(&dxcar1,&dxcar2);
 		drawLog(&dxlog1,&dxlog2,&dxlog3);
-		drawTurtle(&dx);
+		drawTurtle(&dxturtle, &dxturtle1);
 		drawFrog(&dxfrog,&dyfrog);
 
 		gfx_flush();
@@ -132,7 +133,7 @@ void drawBackground()
 	gfx_color(74, 212, 46);
 	gfx_fill_rectangle(0,0,XSIZE,YSCALE);
 
-	// Set Grid
+	/* Set Grid
 	int i, j;
 	gfx_color(108, 105, 105);
 	for (i = 0; i <=XSIZE; i=i+XSCALE){
@@ -140,7 +141,7 @@ void drawBackground()
 	}
 	for (j= 0; j<=YSIZE; j=j+YSCALE){
 		gfx_line(0, j, XSIZE, j);
-	}
+	}*/
 }
 
 void drawLilyPads()
@@ -151,10 +152,6 @@ void drawLilyPads()
 		gfx_fill_arc((k*XSCALE-20),(.5*YSCALE-20),40,40,0,360);
 	}
 }
-
-// NOTE: for moving objects truck, car, and log only need to increment x position
-// Cannot figure out how to generate multiple objects in one line going across
-// tried for loop incrementing i in the x position and that just changed speed? 
 
 void drawTruck(int *dxtruck1, int *dxtruck2) 
 {
@@ -194,8 +191,6 @@ void drawTruck(int *dxtruck1, int *dxtruck2)
 	}	
 	(*dxtruck1)++;
 	(*dxtruck2)+=2;
-		
-
 }
 
 void drawCar(int *dxcar1, int *dxcar2)
@@ -230,7 +225,6 @@ void drawCar(int *dxcar1, int *dxcar2)
 			gfx_fill_rectangle((XSIZE-(3.7*XSCALE) - *dxcar2+i*j*XSCALE),YSIZE-(5.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
 		}
 	}
-	
 	(*dxcar1)++;
 	(*dxcar2)+=2;
 }
@@ -240,10 +234,10 @@ void drawLog(int *dxlog1, int *dxlog2, int *dxlog3)
 	double i,j;
 	for (j=-5; j <=5; j+=0.5){
 		for (i=0;i<=130;i+=13) {
-			gfx_color(121, 68, 7);
-			gfx_fill_rectangle((7*XSCALE)+*dxlog1+i*j*XSCALE,YSIZE-(9.8*YSCALE),(2.5*XSCALE),(.6*YSCALE));
-			gfx_fill_rectangle((3*XSCALE)-*dxlog2+i*j*XSCALE,YSIZE-(10.8*YSCALE),(2*XSCALE),(.6*YSCALE));
-			gfx_fill_rectangle((9*XSCALE)+*dxlog3+i*j*XSCALE,YSIZE-(11.8*YSCALE),(3*XSCALE),(.6*YSCALE));
+			gfx_color(121, 68, 7);	
+			gfx_fill_rectangle((7*XSCALE)+*dxlog1+i*j*XSCALE,YSIZE-(9.8*YSCALE),(2.5*XSCALE),(.6*YSCALE));	// log going right 
+			gfx_fill_rectangle((3*XSCALE)-*dxlog2+i*j*XSCALE,YSIZE-(10.8*YSCALE),(2*XSCALE),(.6*YSCALE));	// log going left
+			gfx_fill_rectangle((9*XSCALE)+*dxlog3+i*j*XSCALE,YSIZE-(11.8*YSCALE),(3*XSCALE),(.6*YSCALE));	// log going right
 		}
 	}
 	(*dxlog1)+=2;
@@ -251,12 +245,12 @@ void drawLog(int *dxlog1, int *dxlog2, int *dxlog3)
 	(*dxlog3)+=3;
 }
 
-void drawTurtle(int *dxturtle)
+void drawTurtle(int *dxturtle, int *dxturtle1)
 {
-/*	double i,j,k;
-	for (j=-5; j <=5; j+=0.5){
-		for (i=0;i<=130;i+=13) {
-			for (k=3;k<=5;i++) {
+	double i,j,k;	
+	for (k=3.5;k<=5.5;k++){	
+		for (j=-1; j <=1; j+=0.5){
+			for (i=0;i<=130;i+=13){
 				gfx_color(9, 110, 23);
 				gfx_fill_arc((k*XSCALE-(.25*XSCALE) + *dxturtle+i*j*XSCALE), (YSIZE-(9.7*YSCALE)), (.7*YSCALE), (.5*YSCALE), 0, 180);
 				gfx_fill_arc((k*XSCALE-(.25*XSCALE) + *dxturtle+i*j*XSCALE), (YSIZE-(9.7*YSCALE)), (.7*YSCALE),(.5*YSCALE), 180,360);
@@ -267,12 +261,27 @@ void drawTurtle(int *dxturtle)
 				gfx_color(0, 0, 0);
 				gfx_fill_arc((k*XSCALE-(.25*XSCALE)+ 39 + *dxturtle+i*j*XSCALE), (YSIZE-9.25*YSCALE)-7.5, 4, 4, 0, 360);
 				gfx_fill_arc((k*XSCALE-(.25*XSCALE)+ 39 + *dxturtle+i*j*XSCALE), (YSIZE-9.45*YSCALE)-7.5, 4, 4, 0, 360);
+			}
+		}
+	}	
+	for (k=6;k<=7;k++){	
+		for (j=-1; j <=1; j+=0.5){
+			for (i=0;i<=130;i+=13){
+				gfx_color(9, 110, 23);
+				gfx_fill_arc((k*XSCALE-(.25*XSCALE) + *dxturtle1+i*j*XSCALE), (YSIZE-(11.7*YSCALE)), (.7*YSCALE), (.5*YSCALE), 0, 180);
+				gfx_fill_arc((k*XSCALE-(.25*XSCALE) + *dxturtle1+i*j*XSCALE), (YSIZE-(11.7*YSCALE)), (.7*YSCALE),(.5*YSCALE), 180,360);
+				gfx_fill_arc((k*XSCALE-(.25*XSCALE)+ 27 + *dxturtle1+i*j*XSCALE), (YSIZE-11.45*YSCALE)-7.5, 15, 15, 0, 360);
+				gfx_color(255, 255, 255);
+				gfx_fill_arc((k*XSCALE-(.25*XSCALE)+ 37 + *dxturtle1+i*j*XSCALE), (YSIZE-11.25*YSCALE)-7.5, 5, 5, 0, 360);
+				gfx_fill_arc((k*XSCALE-(.25*XSCALE)+ 37 + *dxturtle1+i*j*XSCALE), (YSIZE-11.45*YSCALE)-7.5, 5, 5, 0, 360);
+				gfx_color(0, 0, 0);
+				gfx_fill_arc((k*XSCALE-(.25*XSCALE)+ 39 + *dxturtle1+i*j*XSCALE), (YSIZE-11.25*YSCALE)-7.5, 4, 4, 0, 360);
+				gfx_fill_arc((k*XSCALE-(.25*XSCALE)+ 39 + *dxturtle1+i*j*XSCALE), (YSIZE-11.45*YSCALE)-7.5, 4, 4, 0, 360);
+			}
 		}
 	}
-}
-	
 	(*dxturtle)+=2;
-*/	
+	(*dxturtle1)+=3;
 }
 
 void drawFrog(int *dxfrog, int *dyfrog)
@@ -280,13 +289,13 @@ void drawFrog(int *dxfrog, int *dyfrog)
 	// NOTE: frog will move in the x and y direction where dx and dy will be incremented by XSCALE and YSCALE respectively 
 	// frog green body
 	gfx_color(43, 255, 0);
-	gfx_fill_arc((7.5*XSCALE - (.25*XSCALE) + *dxfrog*XSCALE), (YSIZE-(.4*YSCALE)-(.4*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
-	gfx_fill_arc((7.5*XSCALE - (.25*XSCALE) + *dxfrog*XSCALE), (YSIZE-(.4*YSCALE)-(.4*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
+	gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
+	gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
 	
 	// frog yellow body
 	gfx_color(243, 255, 58);
-	gfx_fill_arc((7.5*XSCALE - (.15*XSCALE) + *dxfrog*XSCALE), (YSIZE-(.3*YSCALE)-(.4*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
-	gfx_fill_arc((7.5*XSCALE - (.15*XSCALE) + *dxfrog*XSCALE), (YSIZE-(.3*YSCALE)-(.4*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
+	gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
+	gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
 	
 	// frog eyes
 	gfx_color(239, 20, 239);
