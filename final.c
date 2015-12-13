@@ -125,6 +125,7 @@ int main()
 			usleep(deltat);
 			
 			// check to see if out of lives
+			// instead of returning a "You Lose" window maybe return back to original home page? 
 			if (lives == 0) {
 				w = 2;
 				gfx_clear();
@@ -175,7 +176,7 @@ void drawBackground()
 	// Set Grass 3
 	gfx_color(74, 212, 46);
 	gfx_fill_rectangle(0,0,XSIZE,YSCALE);
-	// Set Grid
+	/* Set Grid
 	int i, j;
 	gfx_color(108, 105, 105);
 	for (i = 0; i <=XSIZE; i=i+XSCALE){
@@ -184,6 +185,7 @@ void drawBackground()
 	for (j= 0; j<=YSIZE; j=j+YSCALE){
 		gfx_line(0, j, XSIZE, j);
 	} 
+	*/
 }
 
 void drawLilyPads()
@@ -194,7 +196,6 @@ void drawLilyPads()
 		gfx_fill_arc((k*XSCALE-20),(.5*YSCALE-20),40,40,0,360);
 	}
 }
-
 
 void drawTruck(int *dxtruck1, int *dxtruck2, int *dxtruck3, int *frog_xpos, int *frog_ypos, int *collision, int *dxfrog, int *dyfrog, int *lives) 
 {
@@ -238,7 +239,6 @@ void drawTruck(int *dxtruck1, int *dxtruck2, int *dxtruck3, int *frog_xpos, int 
 	// Truck Window
 	gfx_color(81, 227, 255);
 	gfx_fill_rectangle(4.85*XSCALE+XSCALE+0.5**dxtruck3*XSCALE,YSIZE-((6.8)*YSCALE),(.15*XSCALE),(.6*YSCALE));
-	
 	
 	// Increment truck positions
 	(*dxtruck1)++;
@@ -355,10 +355,9 @@ void drawLog(int *dxlog1, int *dxlog2, int *dxlog3, int *frog_xpos, int *frog_yp
 		*dxlog1 = -40;
 	}
 */
-
 	// Check for frog ride
 	// note: currently having issues w/ not performing well after multiple rides & dropping off frog in weird places
-	if (((*frog_xpos == 0.25**dxlog1+7) || (*frog_xpos == 0.25**dxlog1+8) || (*frog_xpos == 0.25**dxlog1+9) || (*frog_xpos == 0.25**dxlog1+10)) && (*frog_ypos == 4)) {
+	if (((*frog_xpos == 0.25**dxlog1+8)||(*frog_xpos == 0.25**dxlog1+9)||(*frog_xpos == 0.25**dxlog1+10)) && (*frog_ypos == 4)){
 		*ride = 1;
 		drawFrog(dxfrog,dyfrog,dxlog1,ride,frog_xpos,frog_ypos, win);
 	}
@@ -423,7 +422,7 @@ void drawFrog(int *dxfrog, int *dyfrog, int *ride, int *dxlog1, int *frog_xpos, 
 		gfx_fill_arc((7.7*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
 	}
 	
-	else if (*ride == 1) {
+	/*else if (*ride == 1) {
 		// frog green body
 		gfx_color(43, 255, 0);
 		gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE +0.25**dxlog1*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
@@ -436,17 +435,37 @@ void drawFrog(int *dxfrog, int *dyfrog, int *ride, int *dxlog1, int *frog_xpos, 
 		gfx_color(239, 20, 239);
 		gfx_fill_arc((7.3*XSCALE)-5+*dxfrog*XSCALE+0.25**dxlog1*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
 		gfx_fill_arc((7.7*XSCALE)-5+*dxfrog*XSCALE+0.25**dxlog1*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
-		
+	*/
+
+	else if (*ride == 1) {
+		// frog green body
+		gfx_color(43, 255, 0);
+		gfx_fill_arc((7.25*XSCALE +0.25**dxlog1*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
+		gfx_fill_arc((7.25*XSCALE +0.25**dxlog1*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
+		// frog yellow body
+		gfx_color(243, 255, 58);
+		gfx_fill_arc((7.35*XSCALE +0.25**dxlog1*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
+		gfx_fill_arc((7.35*XSCALE +0.25**dxlog1*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
+		// frog eyes
+		gfx_color(239, 20, 239);
+		gfx_fill_arc((7.3*XSCALE)-5+0.25**dxlog1*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+		gfx_fill_arc((7.7*XSCALE)-5+0.25**dxlog1*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+
+		if ((*dxlog1 > 0) && (*dxlog1 < 13)) {
+			*frog_xpos = *dxlog1;					// why is dxlog1 less than 13? how do we keep in that range? 
+			printf("%d\n",*frog_xpos);
+		}
+
 		// constantly change frog_xpos during ride
 		// currently changing too quickly -- see printf
 		// try using pixels- if 50, increment *frog_xpos
-		if ((*dxlog1 > 0) && (*dxlog1 <13)) {
-			*frog_xpos = *dxlog1;
-			printf("%d\n",*frog_xpos);
-		}
+		//if ((*dxlog1 > 0) && (*dxlog1 <13)) {
+		//	*frog_xpos = *dxlog1;
+		//	printf("%d\n",*frog_xpos);
+		//}
 	}	
 
-	if (*frog_ypos == 5) {
+	if ((*frog_ypos == 5) || (*frog_ypos == 3)){
 		*ride = 0;
 	}
 
@@ -471,10 +490,3 @@ void drawX(int x, int y)
 	gfx_line(x*XSCALE, y*YSCALE, x*XSCALE - XSCALE, y*YSCALE + YSCALE);
 	gfx_line(x*XSCALE, y*YSCALE + YSCALE, x*XSCALE - XSCALE, y*YSCALE);
 }
-
-// void levelUp();
-
-// void controlTimer();
-
-// void controlLives();
-
