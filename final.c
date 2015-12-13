@@ -83,14 +83,15 @@ int main()
 	if(gfx_event_waiting()){		w = gfx_wait();		if (w == 'q') return;	}
 	
 	while (w == 1) {
+	
 		switch(c) {
 			case 'R': // up arrow
-				if (dyfrog > -12) {				// criteria establihsed based on starting point of frog
+				if (dyfrog > -12) {				// criteria established based on starting point of frog
 					dyfrog--;
 					frog_ypos+=-1;
 					score += 10;
-		//			printf("frog y position: %d\n", frog_ypos);
 				}
+		//		printf("frog y position: %d\n", frog_ypos);
 				drawFrog(&dxfrog,&dyfrog,&ride,&dxlog1,&frog_xpos,&frog_ypos,&win,&collision,&lives, &ride2, &dxlog2);
 				c = '+';
 				break;
@@ -98,8 +99,8 @@ int main()
 				if (dxfrog > -7) {
 					dxfrog--;
 					frog_xpos+=-1;
-					//printf("frog x position: %d\n", frog_xpos);
 				}
+		//		printf("frog x position: %d\n", frog_xpos);
 				drawFrog(&dxfrog,&dyfrog,&ride,&dxlog1,&frog_xpos,&frog_ypos,&win,&collision,&lives, &ride2, &dxlog2);
 				c = '+';
 				break;
@@ -116,7 +117,7 @@ int main()
 				if (dxfrog<5) {
 					dxfrog++;
 					frog_xpos+=1;
-					//printf("frog x position: %d\n", frog_xpos);
+		//			printf("frog x position: %d\n", frog_xpos);
 				}
 				drawFrog(&dxfrog,&dyfrog,&ride,&dxlog1,&frog_xpos,&frog_ypos,&win,&collision,&lives, &ride2, &dxlog2);
 				c = '+';
@@ -131,7 +132,7 @@ int main()
 			drawCar(&dxcar1, &dxcar2, &frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog, &lives);
 			drawLog(&dxlog1,&dxlog2,&dxlog3,&frog_xpos, &frog_ypos, &dxfrog, &dyfrog, &ride, &win, &collision, &lives, &ride2);
 			drawTurtle(&dxturtle, &dxturtle1);
-			drawFrog(&dxfrog,&dyfrog,&ride,&dxlog1,&frog_xpos,&frog_ypos,&win,&collision,&lives, &ride2, &dxlog2);
+			drawFrog(&dxfrog,&dyfrog,&ride,&dxlog1,&frog_xpos,&frog_ypos,&win,&collision,&lives,&ride2,&dxlog2);
 
 			gfx_flush();
 			usleep(deltat);
@@ -367,12 +368,17 @@ void drawCar(int *dxcar1, int *dxcar2, int *frog_xpos, int *frog_ypos, int *coll
 
 void drawLog(int *dxlog1, int *dxlog2, int *dxlog3, int *frog_xpos, int *frog_ypos, int *dxfrog, int *dyfrog, int *ride, int *win, int *collision, int *lives, int *ride2)
 {	
-	// Draw logs	gfx_color(121, 68, 7);	gfx_fill_rectangle((1*XSCALE)+4**dxlog1,YSIZE-(9.8*YSCALE),(3*XSCALE),(.6*YSCALE));// log going right 	gfx_fill_rectangle((3*XSCALE)+3**dxlog2,YSIZE-(10.8*YSCALE),(2*XSCALE),(.6*YSCALE));// log going left	gfx_fill_rectangle((9*XSCALE)+5**dxlog3,YSIZE-(11.8*YSCALE),(3*XSCALE),(.6*YSCALE));// log going right	// Increment log positions	(*dxlog1)++;	if (*dxlog1 > 550/4){		*dxlog1 = -100/4;	}	(*dxlog2)--;	if (*dxlog2 < -300/3){		*dxlog2 = 350/3;	}
-	printf("dxlog2: %d\n", *dxlog2);	(*dxlog3)++;	if (*dxlog3 > 200/5){		*dxlog3 = -450/5;	}
-		// Check for frog ride	if (*frog_ypos == 4) {
+	// Draw logs	gfx_color(121, 68, 7);	gfx_fill_rectangle((1*XSCALE)+4**dxlog1,YSIZE-(9.8*YSCALE),(3*XSCALE),(.6*YSCALE));// log going right 	gfx_fill_rectangle((3*XSCALE)-3**dxlog2,YSIZE-(10.8*YSCALE),(2*XSCALE),(.6*YSCALE));// log going left	gfx_fill_rectangle((9*XSCALE)+5**dxlog3,YSIZE-(11.8*YSCALE),(3*XSCALE),(.6*YSCALE));// log going right	// Increment log positions	(*dxlog1)++;	if (*dxlog1 > 550/4){		*dxlog1 = -100/4;	}	(*dxlog2)++;	if (*dxlog2 > 300/3){		*dxlog2 = -350/3;	}	(*dxlog3)++;	if (*dxlog3 > 200/5){		*dxlog3 = -450/5;	}
+	
+	/*	// Check for frog ride	// Check if in row 4
+	if (*frog_ypos == 4) {
+		// Check if on log
 		if (*frog_xpos == (*dxlog1*4/XSCALE+3)){			*ride = 1;
-			*frog_xpos = *frog_xpos + 1;
+			*frog_xpos = *frog_xpos+1;
+			*dxfrog = *dxfrog + 1;
+			// Check if off board
 			if ((*frog_xpos) == 15){				*ride = 0;				*lives = *lives - 1;				*collision = 1;				drawX((*frog_xpos)-2, (*frog_ypos)-1);				resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);			}		} 
+		// If in water
 		if ((*frog_xpos != (*dxlog1*4/XSCALE + 3)) && (*frog_xpos != (*dxlog1*4/XSCALE + 4)) && (*frog_xpos != (*dxlog1*4/XSCALE + 5))) { 
 			*ride = 0;
 			*collision = 1;
@@ -381,29 +387,42 @@ void drawLog(int *dxlog1, int *dxlog2, int *dxlog3, int *frog_xpos, int *frog_yp
 			resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);
 		} 
 	}
-
+	// ensure ride is false if not in row 4
+	if (*frog_ypos != 4) {
+		*ride = 0;
+	}
+	*/
+	
+	// Check for frog ride	// Check if in row 3
 	if (*frog_ypos == 3) {
-		if (*dxlog2 > 0){
-			if ((*frog_xpos == (*dxlog2*3/XSCALE-1)) || (*frog_xpos == (*dxlog2*3/XSCALE)) || (*frog_xpos == (*dxlog2*3/XSCALE+1))){				*ride2 = 1;
-				printf("dxfrog2 manipulated: %d\n", *dxlog2*3/XSCALE-1);
-				*frog_xpos = *frog_xpos - 1;
-				printf("frog x position: %d\n", *frog_xpos);
-				if ((*frog_xpos) == 0){					*ride2 = 0;					*lives = *lives - 1;					*collision = 1;					drawX(*frog_xpos, (*frog_ypos)-1);					resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);				}			}
-		}
-		if (*dxlog2 < 0){
-			if (*frog_xpos == (*dxlog2*-3/XSCALE+1)){				*ride2 = 1;
-				*frog_xpos = *frog_xpos - 1;
-				printf("frog x position: %d\n", *frog_xpos);
-				if ((*frog_xpos) == 0){					*ride = 0;					*lives = *lives - 1;					*collision = 1;					drawX(*frog_xpos, (*frog_ypos)-1);					resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);				}			}
-		}
-		/*if ((*frog_xpos != (*dxlog2*3/XSCALE +2)) && (*frog_xpos != (*dxlog2*3/XSCALE+ 1))) { 
-			*ride2 = 0;
+		// Check if on log
+		if (*frog_xpos == (*dxlog2*-3/XSCALE+5)){			*ride2 = 1;
+			
+			printf("CURRENT FROG COORDINATES\n");
+			printf("frog x position: %d\n", *frog_xpos);
+			printf("frog y position: %d\n\n", *frog_ypos);
+			
+			*frog_xpos = *frog_xpos - 1;
+			*dxfrog = *dxfrog - 1;
+			
+			// Check if off board
+			if ((*frog_xpos) <= 1){				*ride2 = 0;				*lives = *lives - 1;				*collision = 1;				drawX((*frog_xpos)-2, (*frog_ypos)-1);				resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);			}		} 
+		
+		// If in water
+		if ((*frog_xpos != (*dxlog2*3/XSCALE + 3)) && (*frog_xpos != (*dxlog2*3/XSCALE + 4))) { 
+			*ride = 0;
 			*collision = 1;
 			*lives = *lives - 1;
 			drawX(*frog_xpos, *frog_ypos-1);
 			resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);
-		} */
+		} 
+		
 	}
+	// ensure ride2 is false if not in row 3
+	if (*frog_ypos != 3) {
+		*ride2 = 0;
+	}
+
 }
 
 void drawTurtle(int *dxturtle, int *dxturtle1)
@@ -462,6 +481,21 @@ void drawFrog(int *dxfrog, int *dyfrog, int *ride, int *dxlog1, int *frog_xpos, 
 		gfx_color(239, 20, 239);
 		gfx_fill_arc((7.3*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
 		gfx_fill_arc((7.7*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+	
+		if (*ride2 == 0) {
+			// frog green body
+			gfx_color(43, 255, 0);
+			gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
+			gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
+			// frog yellow body
+			gfx_color(243, 255, 58);
+			gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
+			gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
+			// frog eyes
+			gfx_color(239, 20, 239);
+			gfx_fill_arc((7.3*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+			gfx_fill_arc((7.7*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+		}
 	}
 	if (*ride == 1) {
 		// frog green body
@@ -477,42 +511,28 @@ void drawFrog(int *dxfrog, int *dyfrog, int *ride, int *dxlog1, int *frog_xpos, 
 		gfx_fill_arc((1.3*XSCALE)-5+4**dxlog1,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
 		gfx_fill_arc((1.7*XSCALE)-5+4**dxlog1,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
 	}	
-	/*if (*ride2 == 0) {
-		// frog green body
-		gfx_color(43, 255, 0);
-		gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
-		gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
-		// frog yellow body
-		gfx_color(243, 255, 58);
-		gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
-		gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
-		// frog eyes
-		gfx_color(239, 20, 239);
-		gfx_fill_arc((7.3*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
-		gfx_fill_arc((7.7*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
-	}*/
 	if (*ride2 == 1) {
 		// frog green body
 		gfx_color(43, 255, 0);
-		gfx_fill_arc((1.25*XSCALE +4**dxlog2), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
-		gfx_fill_arc((1.25*XSCALE +4**dxlog2), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
+		gfx_fill_arc((3.25*XSCALE -3**dxlog2), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
+		gfx_fill_arc((3.25*XSCALE -3**dxlog2), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
 		// frog yellow body
 		gfx_color(243, 255, 58);
-		gfx_fill_arc((1.35*XSCALE +4**dxlog2), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
-		gfx_fill_arc((1.35*XSCALE +4**dxlog2), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
+		gfx_fill_arc((3.35*XSCALE -3**dxlog2), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
+		gfx_fill_arc((3.35*XSCALE -3**dxlog2), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
 		// frog eyes
 		gfx_color(239, 20, 239);
-		gfx_fill_arc((1.3*XSCALE)-5+4**dxlog2,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
-		gfx_fill_arc((1.7*XSCALE)-5+4**dxlog2,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+		gfx_fill_arc((3.3*XSCALE)-5-3**dxlog2,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+		gfx_fill_arc((3.7*XSCALE)-5-3**dxlog2,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
 	}	
 	
-	// check for ride
+	/*// check for ride
 	if (*frog_ypos != 4) {
 		*ride = 0;
 	}
 	if (*frog_ypos != 3){
 		*ride2 = 0;
-	}
+	} */
 	
 	// check for lilypad
 	if (*frog_ypos == 1) {
