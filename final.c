@@ -370,45 +370,21 @@ void drawCar(int *dxcar1, int *dxcar2, int *frog_xpos, int *frog_ypos, int *coll
 
 void drawLog(int *dxlog1, int *dxlog2, int *dxlog3, int *frog_xpos, int *frog_ypos, int *dxfrog, int *dyfrog, int *ride, int *win, int *collision, int *lives)
 {	
-	// Draw logs	gfx_color(121, 68, 7);	gfx_fill_rectangle((1*XSCALE)+4**dxlog1,YSIZE-(9.8*YSCALE),(3*XSCALE),(.6*YSCALE));// log going right 	gfx_fill_rectangle((3*XSCALE)+3**dxlog2,YSIZE-(10.8*YSCALE),(2*XSCALE),(.6*YSCALE));// log going left	gfx_fill_rectangle((9*XSCALE)+5**dxlog3,YSIZE-(11.8*YSCALE),(3*XSCALE),(.6*YSCALE));// log going right	// Increment log positions	(*dxlog1)++;	if (*dxlog1 > 550/4){		*dxlog1 = -100/4;	}	(*dxlog2)--;	if (*dxlog2 < -300/3){		*dxlog2 = 350/3;	}	(*dxlog3)++;	if (*dxlog3 > 200/5){		*dxlog3 = -450/5;	}	// Check for frog ride	if ((*frog_xpos == (*dxlog1*XSCALE*1) || (*dxlog1*XSCALE*2) || (*dxlog1*XSCALE*3)) && (*frog_ypos == 4)){		*ride = 1;		//drawFrog(dxfrog, dyfrog, ride, dxlog1, frog_xpos, frog_ypos, win);		if (*frog_xpos == 13){			*ride = 0;			*lives = *lives - 1;			*collision = 1;			drawX(*frog_xpos, *frog_ypos-1);			resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);		}	}
-
-/*	// Draw logs
-	gfx_color(121, 68, 7);
-	gfx_fill_rectangle((7*XSCALE)+0.25**dxlog1*XSCALE,YSIZE-(9.8*YSCALE),(2.5*XSCALE),(.6*YSCALE));	// log going right 
-	gfx_fill_rectangle((3*XSCALE)-0.5**dxlog2*XSCALE,YSIZE-(10.8*YSCALE),(2*XSCALE),(.6*YSCALE));	// log going left
-	gfx_fill_rectangle((9*XSCALE)+0.35**dxlog3*XSCALE,YSIZE-(11.8*YSCALE),(3*XSCALE),(.6*YSCALE));	// log going right
-	
-	// Increment log positions
-	(*dxlog1)++;
-	if (0.25**dxlog1 > 20) {
-		*dxlog1 = -40;
+	// Draw logs	gfx_color(121, 68, 7);	gfx_fill_rectangle((1*XSCALE)+4**dxlog1,YSIZE-(9.8*YSCALE),(3*XSCALE),(.6*YSCALE));// log going right 	gfx_fill_rectangle((3*XSCALE)+3**dxlog2,YSIZE-(10.8*YSCALE),(2*XSCALE),(.6*YSCALE));// log going left	gfx_fill_rectangle((9*XSCALE)+5**dxlog3,YSIZE-(11.8*YSCALE),(3*XSCALE),(.6*YSCALE));// log going right	// Increment log positions	(*dxlog1)++;	if (*dxlog1 > 550/4){		*dxlog1 = -100/4;	}	(*dxlog2)--;	if (*dxlog2 < -300/3){		*dxlog2 = 350/3;	}	(*dxlog3)++;	if (*dxlog3 > 200/5){		*dxlog3 = -450/5;	}
+		// Check for frog ride	if (*frog_ypos == 4) {
+		if (((*frog_xpos) == (*dxlog1*4/XSCALE+2)) || ((*frog_xpos) == (*dxlog1*4/XSCALE+3)) || ((*frog_xpos) == (*dxlog1*4/XSCALE+4))){			*ride = 1;
+			*frog_xpos == *frog_xpos + *dxlog1*4/XSCALE;			//drawFrog(dxfrog, dyfrog, ride, dxlog1, frog_xpos, frog_ypos, win);			// check if off the board
+			/*if ((*dxlog1*4/XSCALE+2) == 13){				*ride = 0;				*lives = *lives - 1;				*collision = 1;				drawX(*frog_xpos, *frog_ypos-1);				resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);			}*/		}
+		
+		// this works but it doesn't register the log 
+		 else { 
+			*ride = 0;
+			*collision = 1;
+			*lives = *lives - 1;
+			drawX(*frog_xpos, *frog_ypos-1);
+			resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);
+		} 
 	}
-//	printf("%d\n",*dxlog1);
-	(*dxlog2)++;
-	if (0.5**dxlog2 > 20) {
-		*dxlog1 = -20;
-	}
-	(*dxlog3)++;
-	if (0.35**dxlog3 > 10) {
-		*dxlog1 = -40;
-	}
-
-	// Check for frog ride
-	// note: currently having issues w/ not performing well after multiple rides & dropping off frog in weird places
-	// check if frog in water
-
-	if (((*frog_xpos == 0.25**dxlog1+8)||(*frog_xpos == 0.25**dxlog1+9)||(*frog_xpos == 0.25**dxlog1+10)) && (*frog_ypos == 4)){
-		*ride = 1;
-	}
-	// why isn't this working??
-	if (((*frog_xpos != 0.25**dxlog1+8)||(*frog_xpos != 0.25**dxlog1+9)||(*frog_xpos != 0.25**dxlog1+10)) && (*frog_ypos == 4)) {
-		*ride = 0;
-		*collision = 1;
-		*lives = *lives - 1;
-		drawX(*frog_xpos, *frog_ypos-1);
-		resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);
-	} 
-	*/
 }
 
 void drawTurtle(int *dxturtle, int *dxturtle1)
