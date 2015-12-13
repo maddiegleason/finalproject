@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#include "gfx2.h"
+#include "gfx4.h"
 #define XSIZE 650
 #define YSIZE 650
 #define XSCALE 50 
@@ -31,10 +31,10 @@
 void waitFor (unsigned int secs);
 void drawBackground();
 void drawLilyPads();
-void drawTruck(int *dxtruck1, int *dxtruck2, int *truck_xpos1, int *truck_xpos2, int *truck_xpos3);
-void drawCar(int *dxcar1, int *dxcar2);
-void drawLog(int *dxlog1, int *dxlog2, int *dxlog3);
-void drawFrog(int *dxfrog, int *dyfrog);
+void drawTruck(int *dxtruck1, int *dxtruck2, int *dxtruck3, int *frog_xpos, int *frog_ypos, int *collision, int *dxfrog, int *dyfrog, int *lives); 
+void drawCar(int *dxcar1, int *dxcar2, int *frog_xpos, int *frog_ypos, int *collision, int *dxfrog, int *dyfrog);
+void drawLog(int *dxlog1, int *dxlog2, int *dxlog3, int *frog_xpos, int *frog_ypos, int *dxfrog, int *dyfrog, int *ride);
+void drawFrog(int *dxfrog, int *dyfrog, int *ride, int *dxlog1, int *frog_xpos, int *frog_ypos);
 void drawTurtle(int *dxturtle, int *dxturtle1);
 void resetFrog(int *frog_xpos, int *frog_ypos, int *collision, int *dxfrog, int *dyfrog);
 void drawX(int x, int y);
@@ -43,29 +43,34 @@ int main()
 {
 	char c;
 	char w;
-	int deltat = 25000;
-	int dxfrog = 0, dyfrog = 0;			// initialize frog hop coordinates
-	int dxtruck1 = 0, dxtruck2 = 0;
-	int dxcar1 = 0, dxcar2 = 0;
-	int dxlog1 = 0, dxlog2 = 0, dxlog3 = 0;
+	int deltat = 30000;
+	int dxfrog = 0; 		// initialize frog hop coordinates
+	int dyfrog = 0;	
+	int dxtruck1 = 0; 
+	int dxtruck2 = 0;
+	int dxtruck3 = 0;
+	int dxcar1 = 0; 
+	int dxcar2 = 0;
+	int dxlog1 = 0; 
+	int dxlog2 = 0;
+	int dxlog3 = 0;
 	int dxturtle = 0, dxturtle1= 0;
 	int frog_xpos = 8;
 	int frog_ypos = 13;
-	int truck_xpos1 = 1, truck_ypos1 = 11;
-	int truck_xpos2 = 5, truck_ypos2 = 9;
-	int truck_xpos3 = 12, truck_ypos3 = 7; 
 	int collision = 0;
-	
+	int ride = 0;
+	int lives = 3;
 
 	// Open Window
 	gfx_open(XSIZE, YSIZE, "Frogger");
+	gfx_clear();
+	gfx_color(255,255,255);
+	gfx_text(XSIZE/2-5,YSIZE/2-20,"FROGGER");	gfx_text(XSIZE/2-20,YSIZE/2-5,"click to start");	gfx_text(XSIZE/2-20,YSIZE/2+50,"INSTRUCTIONS:");	gfx_text(XSIZE/2-20,YSIZE/2+65,"don't die lol");
 
 	while (1){
-
-	gfx_text(XSIZE/2-5,YSIZE/2-20,"FROGGER");	gfx_text(XSIZE/2-20,YSIZE/2-5,"click to start");	gfx_text(XSIZE/2-20,YSIZE/2+50,"INSTRUCTIONS:");	gfx_text(XSIZE/2-20,YSIZE/2+65,"don't die lol");	if(gfx_event_waiting()){		w = gfx_wait();		if (w == 'q') return;	}
+	if(gfx_event_waiting()){		w = gfx_wait();		if (w == 'q') return;	}
 	
 	while (w == 1) {
-
 		switch(c) {
 			case 'R': // up arrow
 				if (dyfrog > -12) {				// criteria establihsed based on starting point of frog
@@ -73,7 +78,7 @@ int main()
 					frog_ypos+=-1;
 			//		printf("frog y position: %d\n", frog_ypos);
 				}
-				drawFrog(&dxfrog,&dyfrog);
+				drawFrog(&dxfrog,&dyfrog,&ride,&dxlog1,&frog_xpos,&frog_ypos);
 				c = '+';
 				break;
 			case 'Q': // left arrow
@@ -82,7 +87,7 @@ int main()
 					frog_xpos+=-1;
 			//		printf("frog x position: %d\n", frog_xpos);
 				}
-				drawFrog(&dxfrog,&dyfrog);
+				drawFrog(&dxfrog,&dyfrog,&ride,&dxlog1,&frog_xpos,&frog_ypos);
 				c = '+';
 				break;
 			case 'T': // down arrow
@@ -91,7 +96,7 @@ int main()
 					frog_ypos+=1;
 			//		printf("frog y position: %d\n", frog_ypos);
 				}
-				drawFrog(&dxfrog,&dyfrog);
+				drawFrog(&dxfrog,&dyfrog,&ride,&dxlog1,&frog_xpos,&frog_ypos);
 				c = '+';
 				break;
 			case 'S': // right arrow
@@ -100,66 +105,32 @@ int main()
 					frog_xpos+=1;
 			//		printf("frog x position: %d\n", frog_xpos);
 				}
-				drawFrog(&dxfrog,&dyfrog);
+				drawFrog(&dxfrog,&dyfrog,&ride,&dxlog1,&frog_xpos,&frog_ypos);
 				c = '+';
 				break;
 			}
-			// Check positions for collisions between frog and objects
 				
 			gfx_clear();
 			drawBackground();
 			drawLilyPads();
-			drawTruck(&dxtruck1, &dxtruck2, &truck_xpos1, &truck_xpos2, &truck_xpos3);
-			drawCar(&dxcar1,&dxcar2);
-			drawLog(&dxlog1,&dxlog2,&dxlog3);
+			drawTruck(&dxtruck1, &dxtruck2, &dxtruck3, &frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog, &lives);
+			drawCar(&dxcar1, &dxcar2, &frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
+			drawLog(&dxlog1,&dxlog2,&dxlog3,&frog_xpos, &frog_ypos, &dxfrog, &dyfrog, &ride);
 			drawTurtle(&dxturtle, &dxturtle1);
-			drawFrog(&dxfrog,&dyfrog);
-
-			switch (frog_ypos){
-				/*case 1: //LilyPad 
-					if (frog_xpos == 3 || 5 || 7 || 9 || 11){
-						// level up				
-					}
-					break;
-				case 2:	//Log 3 moving right with turtles
-						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
-					break;
-				case 3:	//Log 2 moving left
-						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
-					break;
-				case 4:	//Log 1	moving right with turtles
-						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
-					break;
-				case 7:	//Truck 1 moving right
-						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
-					break;
-				case 8:	//Car 2 moving left
-						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
-					break;
-				case 9:	//Truck 2 moving left
-						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
-					break;
-				case 10:	//Car 1 moving right
-						collision = 1;
-						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
-					break;*/
-				case 11://Truck 1 moving right
-					if ((frog_xpos == truck_xpos1) || (frog_xpos == (truck_xpos1 + 1))){
-						collision = 1;
-						drawX(frog_xpos+1, frog_ypos-1);
-						resetFrog(&frog_xpos, &frog_ypos, &collision, &dxfrog, &dyfrog);
-					}
-					break;
-			}
+			drawFrog(&dxfrog,&dyfrog,&ride,&dxlog1,&frog_xpos,&frog_ypos);
 
 			gfx_flush();
 			usleep(deltat);
+			
+			// check to see if out of lives
+			if (lives == 0) {
+				w = 2;
+				gfx_clear();
+				gfx_color(255,255,255);
+				gfx_text(XSIZE/2-5,YSIZE/2-20,"YOU LOSE");	
+				gfx_text(XSIZE/2-20,YSIZE/2-5,"press 'q' to quit");
+				if(gfx_event_waiting()){					w = gfx_wait();					if ((w == 'q')) return;				}
+			}
 	
 			if(gfx_event_waiting()){
 			c = gfx_wait();
@@ -182,23 +153,18 @@ void drawBackground()
 	// Set Grass 1
 	gfx_color(74, 212, 46);	
 	gfx_fill_rectangle(0,YSIZE-2*YSCALE,XSIZE,2*YSCALE);
-		
 	// Set Road
 	gfx_color(158, 162, 158);
 	gfx_fill_rectangle(0,YSIZE-7*YSCALE,XSIZE,5*YSCALE);
-
 	// Set Grass 2
 	gfx_color(74, 212, 46);
 	gfx_fill_rectangle(0,YSIZE-9*YSCALE,XSIZE,2*YSCALE);
-
 	// Set Water
 	gfx_color(80, 159, 238);
 	gfx_fill_rectangle(0,YSIZE-12*YSCALE,XSIZE,3*YSCALE);
-
 	// Set Grass 3
 	gfx_color(74, 212, 46);
 	gfx_fill_rectangle(0,0,XSIZE,YSCALE);
-
 	// Set Grid
 	int i, j;
 	gfx_color(108, 105, 105);
@@ -207,7 +173,7 @@ void drawBackground()
 	}
 	for (j= 0; j<=YSIZE; j=j+YSCALE){
 		gfx_line(0, j, XSIZE, j);
-	}
+	} 
 }
 
 void drawLilyPads()
@@ -219,136 +185,175 @@ void drawLilyPads()
 	}
 }
 
-void drawTruck(int *dxtruck1, int *dxtruck2, int *truck_xpos1, int *truck_xpos2, int *truck_xpos3) 
-{
-	double i, j, k;
-	for (k=0; k<=5;k+=4) {
-		for (j=-0.5; j <= 0.5 ; j+=0.5){	
-			for (i=0; i<=130; i+=13) {
-				// TRUCKS GOING RIGHT
-				// Truck Body 
-				gfx_color(255,255,255);
-				gfx_fill_rectangle((k+0)*XSCALE+i*j*XSCALE + *dxtruck1,YSIZE-((k+2.8)*YSCALE),(1.5*XSCALE),(.6*YSCALE));
-				// Truck top 
-				gfx_color(210, 27, 27);
-				gfx_fill_rectangle(((k+1.5)*XSCALE+i*j*XSCALE) + *dxtruck1,YSIZE-((k+2.8)*YSCALE),(.5*XSCALE),(.6*YSCALE));
-				// Truck Middle 
-				gfx_color(0, 0, 0);
-				gfx_fill_rectangle(((k+1.5)*XSCALE+i*j*XSCALE) + *dxtruck1,YSIZE-((k+2.8)*YSCALE),(.15*XSCALE),(.6*YSCALE));
-				// Truck Window
-				gfx_color(81, 227, 255);
-				gfx_fill_rectangle(((k+1.85)*XSCALE+i*j*XSCALE) + *dxtruck1, YSIZE-((k+2.8)*YSCALE),(.15*XSCALE),(.6*YSCALE));
 
-				// TRUCKs GOING LEFT
-				// Truck Body 
-				gfx_color(255,255,255);
-				gfx_fill_rectangle(XSIZE-(1.5*XSCALE+i*j*XSCALE) - *dxtruck2,YSIZE-(4.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
-				// Truck top 
-				gfx_color(210, 27, 27);
-				gfx_fill_rectangle(XSIZE-(2.0*XSCALE+i*j*XSCALE) - *dxtruck2,YSIZE-(4.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
-				// Truck Middle 
-				gfx_color(0, 0, 0);
-				gfx_fill_rectangle(XSIZE-(1.65*XSCALE+i*j*XSCALE) - *dxtruck2,YSIZE-(4.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
-				// Truck Window
-				gfx_color(81, 227, 255);
-				gfx_fill_rectangle(XSIZE-(2.00*XSCALE+i*j*XSCALE) - *dxtruck2, YSIZE-(4.8*YSCALE),(.15*XSCALE),(.6*YSCALE));			
-			}		
-		}
-	}	
-	int m = 1, n = 1;
+void drawTruck(int *dxtruck1, int *dxtruck2, int *dxtruck3, int *frog_xpos, int *frog_ypos, int *collision, int *dxfrog, int *dyfrog, int *lives) 
+{
+	// TRUCK1 GOING RIGHT
+	// Truck Body 
+	gfx_color(255,255,255);
+	gfx_fill_rectangle(XSCALE+0.5**dxtruck1*XSCALE,YSIZE-((2.8)*YSCALE),(1.5*XSCALE),(.6*YSCALE));
+	// Truck top 
+	gfx_color(210, 27, 27);
+	gfx_fill_rectangle(1.5*XSCALE+XSCALE+0.5**dxtruck1*XSCALE,YSIZE-((2.8)*YSCALE),(.5*XSCALE),(.6*YSCALE));
+	// Truck Middle 
+	gfx_color(0, 0, 0);
+	gfx_fill_rectangle(1.5*XSCALE+XSCALE+0.5**dxtruck1*XSCALE,YSIZE-((2.8)*YSCALE),(.15*XSCALE),(.6*YSCALE));
+	// Truck Window
+	gfx_color(81, 227, 255);
+	gfx_fill_rectangle(1.85*XSCALE+XSCALE+0.5**dxtruck1*XSCALE,YSIZE-((2.8)*YSCALE),(.15*XSCALE),(.6*YSCALE));
 	
-/*	for (k=0; k<=5;k+=4) {
-		for (j=-0.5; j <= 0.5 ; j+=0.5){	
-			for (i=0; i<=130; i+=13) {
-	*/			for (m = 1; m<=13; m++){
-					if (*dxtruck1 == 50*m){
-						*truck_xpos1+=1;
-			//			printf("Truck position 1: %d\n", *truck_xpos1);
-					}
-			/*		if ((k*XSCALE+*dxtruck1 + i*j*XSCALE) == 50*m){
-						*truck_xpos1+=1;
-						printf("Truck position 1: %d\n", *truck_xpos1);
-					}
-			*/		if (*dxtruck2 == 50*m){
-						*truck_xpos2+=1;
-			//			printf("Truck position 2: %d\n", *truck_xpos2);
-					}
-				}
-			//}
-		//}
-	//}	
-
+	// TRUCK2 GOING LEFT
+	// Truck Body 
+	gfx_color(255,255,255);
+	gfx_fill_rectangle(XSIZE-1.5*XSCALE-0.5**dxtruck2*XSCALE,YSIZE-(4.8*YSCALE),(1.5*XSCALE),(.6*YSCALE));
+	// Truck top 
+	gfx_color(210, 27, 27);
+	gfx_fill_rectangle(XSIZE-2.0*XSCALE-0.5**dxtruck2*XSCALE,YSIZE-(4.8*YSCALE),(.5*XSCALE),(.6*YSCALE));
+	// Truck Middle 
+	gfx_color(0, 0, 0);
+	gfx_fill_rectangle(XSIZE-1.65*XSCALE-0.5**dxtruck2*XSCALE,YSIZE-(4.8*YSCALE),(.15*XSCALE),(.6*YSCALE));
+	// Truck Window
+	gfx_color(81, 227, 255);
+	gfx_fill_rectangle(XSIZE-2.0*XSCALE-0.5**dxtruck2*XSCALE,YSIZE-(4.8*YSCALE),(.15*XSCALE),(.6*YSCALE));	
+	
+	// TRUCK3 GOING RIGHT
+	gfx_color(255,255,255);
+	gfx_fill_rectangle(4*XSCALE+0.5**dxtruck3*XSCALE,YSIZE-((6.8)*YSCALE),(1.5*XSCALE),(.6*YSCALE));
+	// Truck top 
+	gfx_color(210, 27, 27);
+	gfx_fill_rectangle(4.5*XSCALE+XSCALE+0.5**dxtruck3*XSCALE,YSIZE-((6.8)*YSCALE),(.5*XSCALE),(.6*YSCALE));
+	// Truck Middle 
+	gfx_color(0, 0, 0);
+	gfx_fill_rectangle(4.5*XSCALE+XSCALE+0.5**dxtruck3*XSCALE,YSIZE-((6.8)*YSCALE),(.15*XSCALE),(.6*YSCALE));
+	// Truck Window
+	gfx_color(81, 227, 255);
+	gfx_fill_rectangle(4.85*XSCALE+XSCALE+0.5**dxtruck3*XSCALE,YSIZE-((6.8)*YSCALE),(.15*XSCALE),(.6*YSCALE));
+	
+	
+	// Increment truck positions
 	(*dxtruck1)++;
-	(*dxtruck2)+=2;
-
-	if (*dxtruck1 > XSIZE) {
-		*dxtruck1 = 0;
+	if (0.5**dxtruck1 > 13) {
+		*dxtruck1 = -10;
 	}
-	if (*dxtruck2 > XSIZE) {
-		*dxtruck2 = 0;
+	(*dxtruck2)++;
+	if (0.5**dxtruck2 > 13) {
+		*dxtruck2 = -10;
 	}
+	(*dxtruck3)++;
+	if (0.5**dxtruck3 > 13) {
+		*dxtruck3 = -20;
+	}
+	
+	// Check for collisions
+	if (((*frog_xpos == 0.5**dxtruck1+1)||(*frog_xpos == 0.5**dxtruck1+2)||(*frog_xpos == 0.5**dxtruck1+3)) && (*frog_ypos == 11)) {
+		*collision = 1;
+		*lives = *lives - 1;
+		drawX(*frog_xpos, *frog_ypos-1);
+		resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);
+	}
+	// note: having troubles w/ accurately detecting these two collisions:
+/*	if (((*frog_xpos == 0.5**dxtruck2+1)||(*frog_xpos == 0.5**dxtruck2+2)||(*frog_xpos == 0.5**dxtruck2+3)) && (*frog_ypos == 9)) {
+		*collision = 1;
+		drawX(*frog_xpos, *frog_ypos-1);
+		resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);
+	}
+	if (((*frog_xpos == 0.5**dxtruck3+1)||(*frog_xpos == 0.5**dxtruck3+2)||(*frog_xpos == 0.5**dxtruck3+3)) && (*frog_ypos == 7)) {
+		*collision = 1;
+		drawX(*frog_xpos, *frog_ypos-1);
+		resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);
+	}*/
 
-//	printf("dxtruck1: %d\n", *dxtruck1);
-//	printf("dxtruck2: %d\n", *dxtruck2);
 }
 
-void drawCar(int *dxcar1, int *dxcar2)
+void drawCar(int *dxcar1, int *dxcar2, int *frog_xpos, int *frog_ypos, int *collision, int *dxfrog, int *dyfrog)
 {
-	double i,j;
-	for (j=-0.5; j <=0.5; j+=0.5){
-		for (i=0;i<=130;i+=13) {
-			// CAR GOING RIGHT
-			// Car Body
-			gfx_color(165, 29, 124);
-			gfx_fill_rectangle(((3*XSCALE) + *dxcar1 +i*j*XSCALE),YSIZE-(3.8*YSCALE),XSCALE,(.6*YSCALE));
-			// Headlights
-			gfx_color(253, 234, 59);
-			gfx_fill_rectangle(((3.9*XSCALE) + *dxcar1+i*j*XSCALE),YSIZE-(3.8*YSCALE),(.1*XSCALE),(.1*YSCALE));
-			gfx_fill_rectangle(((3.9*XSCALE) + *dxcar1+i*j*XSCALE),YSIZE-(3.3*YSCALE),(.1*XSCALE),(.1*YSCALE));
-			// Windows
-			gfx_color(81, 227, 255);
-			gfx_fill_rectangle(((3.3*XSCALE) + *dxcar1+i*j*XSCALE),YSIZE-(3.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
-			gfx_fill_rectangle(((3.6*XSCALE) + *dxcar1+i*j*XSCALE),YSIZE-(3.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
 
-			// CAR GOING LEFT
-			// Car Body
-			gfx_color(165, 29, 124);
-			gfx_fill_rectangle((XSIZE-(4*XSCALE) - *dxcar2+i*j*XSCALE),YSIZE-(5.8*YSCALE),XSCALE,(.6*YSCALE));
-			// Headlights
-			gfx_color(253, 234, 59);
-			gfx_fill_rectangle((XSIZE-(4*XSCALE) - *dxcar2+i*j*XSCALE),YSIZE-(5.8*YSCALE),(.1*XSCALE),(.1*YSCALE));
-			gfx_fill_rectangle((XSIZE-(4*XSCALE) - *dxcar2+i*j*XSCALE),YSIZE-(5.3*YSCALE),(.1*XSCALE),(.1*YSCALE));
-			// Windows
-			gfx_color(81, 227, 255);
-			gfx_fill_rectangle((XSIZE-(3.4*XSCALE) - *dxcar2+i*j*XSCALE),YSIZE-(5.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
-			gfx_fill_rectangle((XSIZE-(3.7*XSCALE) - *dxcar2+i*j*XSCALE),YSIZE-(5.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
-		}
-	}
+	// CAR GOING RIGHT
+	// Car Body
+	gfx_color(165, 29, 124);
+	gfx_fill_rectangle(4*XSCALE+0.25**dxcar1*XSCALE,YSIZE-(3.8*YSCALE),XSCALE,(.6*YSCALE));
+	// Headlights
+	gfx_color(253, 234, 59);
+	gfx_fill_rectangle(3.9*XSCALE+XSCALE+0.25**dxcar1*XSCALE,YSIZE-(3.8*YSCALE),(.1*XSCALE),(.1*YSCALE));
+	gfx_fill_rectangle(3.9*XSCALE+XSCALE+0.25**dxcar1*XSCALE,YSIZE-(3.3*YSCALE),(.1*XSCALE),(.1*YSCALE));
+	// Windows
+	gfx_color(81, 227, 255);
+	gfx_fill_rectangle(3.3*XSCALE+XSCALE+0.25**dxcar1*XSCALE,YSIZE-(3.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
+	gfx_fill_rectangle(3.6*XSCALE+XSCALE+0.25**dxcar1*XSCALE,YSIZE-(3.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
+
+	// CAR GOING LEFT
+	// Car Body
+	gfx_color(165, 29, 124);
+	gfx_fill_rectangle(XSIZE-(4*XSCALE)-0.5**dxcar2*XSCALE,YSIZE-(5.8*YSCALE),XSCALE,(.6*YSCALE));
+	// Headlights
+	gfx_color(253, 234, 59);
+	gfx_fill_rectangle(XSIZE-(4*XSCALE)-0.5**dxcar2*XSCALE,YSIZE-(5.8*YSCALE),(.1*XSCALE),(.1*YSCALE));
+	gfx_fill_rectangle(XSIZE-(4*XSCALE)-0.5**dxcar2*XSCALE,YSIZE-(5.3*YSCALE),(.1*XSCALE),(.1*YSCALE));
+	// Windows
+	gfx_color(81, 227, 255);
+	gfx_fill_rectangle(XSIZE-(3.4*XSCALE)-0.5**dxcar2*XSCALE,YSIZE-(5.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
+	gfx_fill_rectangle(XSIZE-(3.7*XSCALE)-0.5**dxcar2*XSCALE,YSIZE-(5.65*YSCALE),(.1*XSCALE),(.3*YSCALE));
+
+	// Increment car positions
 	(*dxcar1)++;
-	(*dxcar2)+=2;
+	if (0.25**dxcar1 > 13) {
+		*dxcar1 = -20;
+	}
+	(*dxcar2)++;
+	if (0.5**dxcar2 > 13) {
+		*dxcar2 = -10;
+	}
 
-
+	// Check for collisions
+	if ((*frog_xpos == 0.25**dxcar1+4) && (*frog_ypos == 10)) {
+		*collision = 1;
+		drawX(*frog_xpos, *frog_ypos-1);
+		resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);
+	}
+	// note: having troubles checking successive collisions again
+/*	if ((*frog_xpos == 0.5**dxcar2-4) && (*frog_ypos == 8)) {
+		*collision = 1;
+		drawX(*frog_xpos, *frog_ypos-1);
+		resetFrog(frog_xpos, frog_ypos, collision, dxfrog, dyfrog);
+	} */
 }
 
-void drawLog(int *dxlog1, int *dxlog2, int *dxlog3)
-{
-	/*double i,j;
-	for (j=-5; j <=5; j+=0.5){
-		for (i=0;i<=130;i+=13) {
-			gfx_color(121, 68, 7);	
-			gfx_fill_rectangle((7*XSCALE)+*dxlog1+i*j*XSCALE,YSIZE-(9.8*YSCALE),(2.5*XSCALE),(.6*YSCALE));	// log going right 
-			gfx_fill_rectangle((3*XSCALE)-*dxlog2+i*j*XSCALE,YSIZE-(10.8*YSCALE),(2*XSCALE),(.6*YSCALE));	// log going left
-			gfx_fill_rectangle((9*XSCALE)+*dxlog3+i*j*XSCALE,YSIZE-(11.8*YSCALE),(3*XSCALE),(.6*YSCALE));	// log going right
-		}
+void drawLog(int *dxlog1, int *dxlog2, int *dxlog3, int *frog_xpos, int *frog_ypos, int *dxfrog, int *dyfrog, int *ride)
+{	
+	// Draw logs
+	gfx_color(121, 68, 7);
+	gfx_fill_rectangle((7*XSCALE)+0.25**dxlog1*XSCALE,YSIZE-(9.8*YSCALE),(2.5*XSCALE),(.6*YSCALE));	// log going right 
+	gfx_fill_rectangle((3*XSCALE)-0.5**dxlog2*XSCALE,YSIZE-(10.8*YSCALE),(2*XSCALE),(.6*YSCALE));	// log going left
+	gfx_fill_rectangle((9*XSCALE)+0.35**dxlog3*XSCALE,YSIZE-(11.8*YSCALE),(3*XSCALE),(.6*YSCALE));	// log going right
+	
+	// Increment log positions
+	(*dxlog1)++;
+	if (0.25**dxlog1 > 15) {
+		*dxlog1 = -40;
 	}
-	(*dxlog1)+=2;
-	(*dxlog2)++;
-	(*dxlog3)+=3;*/
+//	printf("%d\n",*dxlog1);
+/*	(*dxlog2)++;
+	if (0.5**dxlog2 > 20) {
+		*dxlog1 = -20;
+	}
+	(*dxlog3)++;
+	if (0.35**dxlog3 > 10) {
+		*dxlog1 = -40;
+	}
+*/
+
+	// Check for frog ride
+	// note: currently having issues w/ not performing well after multiple rides & dropping off frog in weird places
+	if (((*frog_xpos == 0.25**dxlog1+7) || (*frog_xpos == 0.25**dxlog1+8) || (*frog_xpos == 0.25**dxlog1+9) || (*frog_xpos == 0.25**dxlog1+10)) && (*frog_ypos == 4)) {
+		*ride = 1;
+		drawFrog(dxfrog,dyfrog,dxlog1,ride,frog_xpos,frog_ypos);
+	}
+	
 }
 
 void drawTurtle(int *dxturtle, int *dxturtle1)
 {
-	/*double i,j,k;	
+/*	double i,j,k;	
 	for (k=3.5;k<=5.5;k++){	
 		for (j=-1; j <=1; j+=0.5){
 			for (i=0;i<=130;i+=13){
@@ -386,24 +391,50 @@ void drawTurtle(int *dxturtle, int *dxturtle1)
 */
 }
 
-void drawFrog(int *dxfrog, int *dyfrog)
+void drawFrog(int *dxfrog, int *dyfrog, int *ride, int *dxlog1, int *frog_xpos, int *frog_ypos)
 {
 	// NOTE: frog will move in the x and y direction where dx and dy will be incremented by XSCALE and YSCALE respectively 
-	// frog green body
-	gfx_color(43, 255, 0);
-	gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
-	gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
+	if (*ride == 0) {
+		// frog green body
+		gfx_color(43, 255, 0);
+		gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
+		gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
+		// frog yellow body
+		gfx_color(243, 255, 58);
+		gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
+		gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
+		// frog eyes
+		gfx_color(239, 20, 239);
+		gfx_fill_arc((7.3*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+		gfx_fill_arc((7.7*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+	}
 	
-	// frog yellow body
+	else if (*ride == 1) {
+		// frog green body
+		gfx_color(43, 255, 0);
+		gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE +0.25**dxlog1*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
+		gfx_fill_arc((7.25*XSCALE + *dxfrog*XSCALE +0.25**dxlog1*XSCALE), (YSIZE-(.8*YSCALE) + *dyfrog*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
+		// frog yellow body
+		gfx_color(243, 255, 58);
+		gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE +0.25**dxlog1*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
+		gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE +0.25**dxlog1*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
+		// frog eyes
+		gfx_color(239, 20, 239);
+		gfx_fill_arc((7.3*XSCALE)-5+*dxfrog*XSCALE+0.25**dxlog1*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+		gfx_fill_arc((7.7*XSCALE)-5+*dxfrog*XSCALE+0.25**dxlog1*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+		
+		// constantly change frog_xpos during ride
+		// currently changing too quickly -- see printf
+		// try using pixels- if 50, increment *frog_xpos
+		if ((*dxlog1 > 0) && (*dxlog1 <13)) {
+			*frog_xpos = *dxlog1;
+			printf("%d\n",*frog_xpos);
+		}
+	}	
 
-	gfx_color(243, 255, 58);
-	gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
-	gfx_fill_arc((7.35*XSCALE + *dxfrog*XSCALE), (YSIZE-(.7*YSCALE) + *dyfrog*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
-	
-	// frog eyes
-	gfx_color(239, 20, 239);
-	gfx_fill_arc((7.3*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
-	gfx_fill_arc((7.7*XSCALE)-5+*dxfrog*XSCALE,YSIZE-(.7*YSCALE)-5+*dyfrog*YSCALE,10,10,0,360);
+	if (*frog_ypos == 5) {
+		*ride = 0;
+	}
 }
 
 void resetFrog(int *frog_xpos, int *frog_ypos, int *collision, int *dxfrog, int *dyfrog)
@@ -425,7 +456,7 @@ void drawX(int x, int y)
 
 // void levelUp();
 
-// void contorlTimer();
+// void controlTimer();
 
 // void controlLives();
 
