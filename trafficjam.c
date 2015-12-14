@@ -53,12 +53,13 @@ int main()
 	gfx_clear();
 	gfx_color(255,255,255);
 	gfx_changefont("12x24");
-	gfx_text(XSIZE/2-35,YSIZE/2-20,"Traffic Jam");
-	gfx_changefont("6x9");	gfx_text(XSIZE/2-25,YSIZE/2-5,"click to start");
+	gfx_text(XSIZE/2-40,YSIZE/2-15,"Traffic Jam");
+	gfx_changefont("6x9");	gfx_text(XSIZE/2-20,YSIZE/2-5,"click to start");
 	gfx_changefont("8x13");	gfx_text(XSIZE/2-30,YSIZE/2+50,"INSTRUCTIONS:");
-	gfx_changefont("6x9");	gfx_text(XSIZE/2-25,YSIZE/2+65,"don't get hit lol");
-	gfx_text(XSIZE/2-40,YSIZE/2+75,"you have three lives");
-	gfx_text(XSIZE/2-22,YSIZE/2+85,"press q to quit");
+	gfx_changefont("6x9");	gfx_text(XSIZE/2-22,YSIZE/2+65,"don't get hit");
+	gfx_text(XSIZE/2-40,YSIZE/2+75,"you have nine lives");
+	gfx_text(XSIZE/2-45,YSIZE/2+85,"each level gets faster");
+	gfx_text(XSIZE/2-25,YSIZE/2+95,"press q to quit");
 
 	while (1){
 		if(gfx_event_waiting()){			w = gfx_wait();			if (w == 'q') return;		}
@@ -116,7 +117,6 @@ int main()
 			gfx_flush();
 			usleep(deltat);
 
-	
 			if(gfx_event_waiting()){
 			c = gfx_wait();
 				if (c=='q'){
@@ -145,15 +145,7 @@ void drawBackground()
 	gfx_fill_rectangle(0,YSIZE-9*YSCALE,XSIZE,2*YSCALE);
 	gfx_fill_rectangle(0,YSIZE-12*YSCALE,XSIZE,3*YSCALE);
 
-	// Set Grid
-	int i, j;
-	gfx_color(108, 105, 105);
-	for (i = 0; i <=XSIZE; i=i+XSCALE){
-		gfx_line(i, 0, i, YSIZE);
-	}
-	for (j= 0; j<=YSIZE; j=j+YSCALE){
-		gfx_line(0, j, XSIZE, j);
-	}
+	// Set Grid	int i, j, k;		gfx_color(255, 255, 0);	for (j= 2*YSCALE; j<=(YSIZE-3*YSCALE); j=j+YSCALE){		for (k = 0; k <=YSIZE; k=k+XSCALE/2){			gfx_line(k, j, k+XSCALE/4, j);		}	}
 }
 
 void drawBase()
@@ -302,14 +294,13 @@ void drawCar(int *dxcar1, int *dxcar2, int *dxcar3, int *dxcar4, int *dxcar5, in
 
 void drawplayer(int *dxplayer, int *dyplayer, int *player_xpos, int *player_ypos, int *win, int *collision, int *lives)
 {
-	// player red body
+	// red body
 	gfx_color(255, 0, 0);
-	gfx_fill_arc((7.25*XSCALE + *dxplayer*XSCALE), (YSIZE-(.8*YSCALE) + *dyplayer*YSCALE), (.5*YSCALE), (.7*YSCALE), 0, 180);
-	gfx_fill_arc((7.25*XSCALE + *dxplayer*XSCALE), (YSIZE-(.8*YSCALE) + *dyplayer*YSCALE), (.5*YSCALE), (.7*YSCALE), 180, 360);
-	// player yellow body
+	gfx_fill_arc((7.25*XSCALE + *dxplayer*XSCALE), (YSIZE-(.8*YSCALE) + *dyplayer*YSCALE), 30, 30, 0, 360);
+	// yellow body
 	gfx_color(255, 255, 255);
-	gfx_fill_arc((7.35*XSCALE + *dxplayer*XSCALE), (YSIZE-(.7*YSCALE) + *dyplayer*YSCALE), (.3*YSCALE), (.5*YSCALE), 0, 180);
-	gfx_fill_arc((7.35*XSCALE + *dxplayer*XSCALE), (YSIZE-(.7*YSCALE) + *dyplayer*YSCALE), (.3*YSCALE), (.5*YSCALE), 180, 360);
+	gfx_fill_arc((7.35*XSCALE + *dxplayer*XSCALE), (YSIZE-(.7*YSCALE) + *dyplayer*YSCALE), 20, 20, 0, 360);
+
 
 }
 
