@@ -1,0 +1,15 @@
+Authors: Madeline Gleason and Taylor Rongaus
+Date: December 14, 2015
+Final.c
+
+Our final project, titled, "Why did the chicken...?" is a computer game that requires the user to move a chicken across the raod witout getting hit by trucks or cars moving at different speeds in different directions. The user must land on one of five bases in order to move up to the next level. There are three levels, and on each the trucks and cars move faster and faster. The user has nine lives to beat the game. Upon winning, the answer to the question will be displayed. 
+
+Our project utilizes three gfx windows. The first explains the game and asks the user to click anywhere to begin. The second window contains the game. The third window will be displayed if the user loses or wins. If the user wins the window will display "YOU LOSE" and ask the user to quit. If the user wins, the window will display "YOU WIN" with the answer to the question "Why did the chicken...?" 
+
+Our program contains ten functions, multiple switch statements, several while loops, for loops, and if statements. Additionally we used pointers to pass much of our information by reference between functions. 
+
+drawBackground sets up the board with black and grey rectangles and yellow dashed lines to represent the road. drawBases sets up the five bases the user has to land on to level up or win the game. printInfo displays the user's score, number of lives, and the current level of the game. This function utilizes a num to string function. drawTruck and drawCar draw the trucks and cars respectively. Additionally these functions control both the movement and the collision check features of the trucks and cars. drawplayer draws a yellow chicken head with a black eye and orange beak. resetplayer moves the chicken player back to its starting location if a collision is detected in either drawTruck or drawCar. drawX will draw a red X over a collision location. Lastly checkEvents check to see if the game should should level up, if the user stepped on an invalid base at the top of the screen, if the user won the game, and if the user is out of lives. 
+
+In main, we use a switch statement control the movement of the chicken with the four key presses. When a key is pressed the position of the chicken is incremented or decremented and our drawplayer function is called to redraw the chicken at each new position. Animation is controlled with gfx_clear(), flush and usleep calls in main. Lastly we check to see if the user enters 'q' to quit the game entirely. 
+
+Our biggest challenge with this project was correctly detecting collisions between the chicken and the trucks and cars. It was difficult to tell if a collision was detected correctly to the sometimes glitchy nature of the animation. Ultimatley, we tried to find the best way to check the position of the player against the instantaneous position of the trucks and cars. However, sometimes a collision will not be detected when it should or will be detected when it should not. Other than that, we both worked really well together and enjoyed creating a fun game to play with our friends. 
